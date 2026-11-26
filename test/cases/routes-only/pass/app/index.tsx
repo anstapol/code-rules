@@ -1,3 +1,3 @@
-import { Home } from '@/features/home/components/Home';
+import { Home } from '@/features/home/components/home.tsx';
 
 export default Home;
