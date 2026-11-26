@@ -18,23 +18,11 @@ const root = join(import.meta.dirname, '..');
 const cases = join(import.meta.dirname, 'cases');
 const PACKAGE = '@anstapol/code-rules';
 const ENTRY_FILES = ['expo-app', 'next-monorepo', 'typescript'];
-const STABLE_GROUPS = [
-  'a11y',
-  'complexity',
-  'correctness',
-  'performance',
-  'security',
-  'style',
-  'suspicious'
-];
-
 const TYPESCRIPT_RULES = [
   'define-tool-in-tools',
   'hooks-only',
   'no-functions-in-constants',
-  'no-inline-styles',
   'no-type-escapes',
-  'one-primary-action',
   'schemas-only',
   'tools-only',
   'types-only'
@@ -44,16 +32,6 @@ const ENTRIES = {
   'next-monorepo': [...TYPESCRIPT_RULES, 'no-private-process-env'],
   typescript: TYPESCRIPT_RULES
 };
-// Shipped but referenced by no entry point. A project turns them on in its own
-// biome.json, for the paths it chooses.
-const OPT_IN_RULES = [
-  'danger-in-kit',
-  'no-raw-colors',
-  'no-raw-numbers',
-  'no-raw-primitives',
-  'routes-only'
-];
-
 let passed = 0;
 let failed = 0;
 
@@ -159,37 +137,17 @@ function lintCase(consumer, fixtureDir) {
   return { files, output, status };
 }
 
-// Every stable rule is listed in typescript.json, so a Biome upgrade that adds
-// one fails here until it is turned on or given a written reason in the README.
-function checkRuleCoverage() {
-  const schema = JSON.parse(
-    readFileSync(join(root, 'node_modules/@biomejs/biome/configuration_schema.json'), 'utf8')
-  );
-  const defs = schema.$defs;
-  const deref = (ref) => defs[ref.split('/').pop()];
+// The base is the recommended preset plus named rules, and declares the Jest
+// globals in tests, so a project's tests need no imports from @jest/globals.
+function checkBase() {
   const config = JSON.parse(readFileSync(join(root, 'typescript.json'), 'utf8'));
-  const readme = readFileSync(join(root, 'README.md'), 'utf8');
-  const missing = [];
-  const undocumented = [];
-  for (const group of STABLE_GROUPS) {
-    const groupRef = deref(defs.Rules.properties[group].anyOf[0].$ref).anyOf[1].$ref;
-    const names = Object.keys(deref(groupRef).properties).filter(
-      (name) => name !== 'recommended' && name !== 'preset'
-    );
-    for (const name of names) {
-      const setting = config.linter.rules[group]?.[name];
-      if (setting === undefined) {
-        missing.push(`${group}/${name}`);
-      } else if (setting === 'off' && !readme.includes(`\`${name}\``)) {
-        undocumented.push(`${group}/${name}`);
-      }
-    }
-  }
-  report(missing.length === 0, 'typescript.json lists every stable rule', missing.join('\n'));
+  report(config.linter.rules.preset === 'recommended', 'typescript.json uses the recommended preset');
+  const tests = config.overrides.find((override) => override.includes.includes('**/test/**'));
+  const globals = tests?.javascript?.globals ?? [];
   report(
-    undocumented.length === 0,
-    'every rule turned off in typescript.json has a README row',
-    undocumented.join('\n')
+    ['describe', 'expect', 'it', 'jest', 'test'].every((name) => globals.includes(name)),
+    'tests declare the Jest globals',
+    globals.join(', ')
   );
 }
 
@@ -272,7 +230,7 @@ function checkPureHelpers(consumer) {
 const build = run('node', [join(root, 'scripts/build.js'), '--check'], root);
 must(build, 'Entry points are stale. pnpm build');
 
-checkRuleCoverage();
+checkBase();
 const consumer = setUpConsumer();
 checkEntryPoints(consumer);
 checkReactComponent(consumer);
@@ -295,16 +253,6 @@ for (const [entry, rules] of Object.entries(ENTRIES)) {
   for (const rule of rules) {
     checkRule(consumer, entry, rule);
   }
-}
-
-// An opt-in rule is not in any entry point, and works once a project adds it.
-for (const rule of OPT_IN_RULES) {
-  useEntry(consumer, 'expo-app');
-  const { output } = lintCase(consumer, join(cases, rule, 'fail'));
-  const shipped = messages(rule).some((message) => output.includes(message));
-  report(!shipped, `${rule} is opt-in, not in expo-app`, output);
-  useEntry(consumer, 'expo-app', [rule]);
-  checkRule(consumer, 'expo-app + opt-in', rule);
 }
 
 rmSync(consumer, { force: true, recursive: true });
