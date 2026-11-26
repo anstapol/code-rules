@@ -15,6 +15,7 @@
   "files": [
     "expo-app.json",
     "next-monorepo.json",
+    "docs",
     "rules",
     "tsconfig",
     "typescript.json"

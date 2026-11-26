@@ -26,6 +26,7 @@ The config now matches one reference Next.js monorepo, which passes it with zero
 - `next-monorepo` also allows barrel files in workspace package entry points, default exports in email templates and MDX files, `noConsole` in `prisma/`, and treats `next-config.ts` like a config file. `no-private-process-env` skips config files, `next-config.ts`, `prisma/`, scripts and tests.
 - `expo-app` keeps only Expo and React Native rules: `noReactNativeRawText`, Expo Router file names and default exports, no `react-native` in helpers, `pressable-role` and `lucide-by-path`.
 - Tests declare the Jest globals.
+- `docs/features-pattern.md` documents every role, the paths each rule matches and what each file may contain. It ships in the package.
 
 ### Removed grit rules
 

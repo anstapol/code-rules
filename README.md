@@ -2,7 +2,7 @@
 
 Shared lint, format and compiler config for my TypeScript projects. It ships Biome config, grit rules and a TypeScript `tsconfig`.
 
-Every entry point enforces the same project structure, the [features pattern](#features-pattern). Beyond it, the rules are those of one reference Next.js monorepo that passes them with zero diagnostics.
+Every entry point enforces the same project structure, the [features pattern](docs/features-pattern.md). Beyond it, the rules are those of one reference Next.js monorepo that passes them with zero diagnostics.
 
 It needs Biome 2.5.15 exactly. Biome is a peer dependency, so the project installs it.
 
@@ -59,24 +59,23 @@ All entry points format the same way: 2 spaces, LF, 100 columns, single quotes i
 
 ## Features pattern
 
-Each app keeps its code in `features/<feature>/`. A workspace package that shares features keeps them in `packages/<name>/src/<feature>/`. A feature holds the files and folders it needs, from this list:
+Code is grouped by domain in `features/<domain>/`, or `packages/<name>/src/<domain>/` in a shared package. Each file and folder has one role, and every entry point enforces the same roles:
 
-| File or folder | Role | Enforced by |
-| --- | --- | --- |
-| `actions/` | Server actions. | |
-| `components/` | React components. Each file exports components only. | `useComponentExportOnlyModules` |
-| `hooks.ts`, `hooks.tsx`, `hooks/` | Exports are `use*` hooks. | `hooks-only` |
-| `queries/` or `queries.ts` | Reads. | |
-| `schemas.ts`, `schemas/` | Exports end in `Schema`. | `schemas-only` |
-| `constants.ts` | Values only, `CONSTANT_CASE` names. | `no-functions-in-constants`, `useNamingConvention` |
-| `helpers.ts`, `helpers/` | Pure functions: no React and no database client. `next-monorepo` also bans `next/cache`, `next/headers` and `server-only`, and `expo-app` bans `react-native`. | `noRestrictedImports` |
-| `server.ts` | Server code and writes. The database client is imported here, in `queries/` and in `actions/`. | |
-| `tools.ts`, `tools/` | Model tools. Exports end in `Tools`, no database client. `defineTool` is called only here. | `tools-only`, `define-tool-in-tools`, `noRestrictedImports` |
-| `types.ts` | Types only. | `types-only` |
+```text
+features/orders/
+  actions/        server actions
+  components/     exports components only
+  hooks.ts        exports use* hooks only
+  queries/        reads
+  schemas.ts      exports *Schema only
+  constants.ts    values only, CONSTANT_CASE names
+  helpers.ts      pure functions: no React, no database client
+  server.ts       server code and writes, imports the database client
+  tools.ts        exports *Tools only, the only place defineTool is called
+  types.ts        types only
+```
 
-The role rules match by path: `**/features/**/<file>` and `**/src/*/<file>`, except `constants.ts`, which counts anywhere. Tests are excluded. The database client is `@prisma/client`, `drizzle-orm`, `expo-sqlite` or any `@*/database/client` import.
-
-`no-type-escapes` applies to all code outside tests. Imports may be relative, `../` included, and route files under `app/` may define their page or handler.
+[docs/features-pattern.md](docs/features-pattern.md) lists every role with the exact paths each rule matches and what each file may contain.
 
 ## Strict TypeScript
 
