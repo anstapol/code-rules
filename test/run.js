@@ -40,19 +40,19 @@ const TYPESCRIPT_RULES = [
   'types-only'
 ];
 const ENTRIES = {
-  'expo-app': [
-    ...TYPESCRIPT_RULES,
-    'danger-in-kit',
-    'lucide-by-path',
-    'no-raw-colors',
-    'no-raw-numbers',
-    'no-raw-primitives',
-    'pressable-role',
-    'routes-only'
-  ],
+  'expo-app': [...TYPESCRIPT_RULES, 'lucide-by-path', 'pressable-role'],
   'next-monorepo': [...TYPESCRIPT_RULES, 'no-private-process-env'],
   typescript: TYPESCRIPT_RULES
 };
+// Shipped but referenced by no entry point. A project turns them on in its own
+// biome.json, for the paths it chooses.
+const OPT_IN_RULES = [
+  'danger-in-kit',
+  'no-raw-colors',
+  'no-raw-numbers',
+  'no-raw-primitives',
+  'routes-only'
+];
 
 let passed = 0;
 let failed = 0;
@@ -124,10 +124,13 @@ function setUpConsumer() {
   return dir;
 }
 
-function useEntry(consumer, entry) {
+function useEntry(consumer, entry, plugins = []) {
   writeFileSync(
     join(consumer, 'biome.json'),
-    JSON.stringify({ extends: [`${PACKAGE}/${entry}`] })
+    JSON.stringify({
+      extends: [`${PACKAGE}/${entry}`],
+      plugins: plugins.map((rule) => `./node_modules/${PACKAGE}/rules/${rule}.grit`)
+    })
   );
 }
 
@@ -240,13 +243,13 @@ function checkFireAndForget(consumer) {
 }
 
 // The features pattern: relative imports and the database client in server.ts
-// pass in any project, and a Next route file may define its page component.
+// pass in every project type, and a route file may define its page component.
 function checkFeaturesPattern(consumer) {
   const fixture = join(cases, 'features-pattern');
-  for (const name of ['typescript', 'next-monorepo']) {
+  for (const name of ENTRY_FILES) {
     useEntry(consumer, name);
     const files = placeFixture(consumer, fixture).filter(
-      (file) => name === 'next-monorepo' || !file.startsWith('app')
+      (file) => name !== 'typescript' || !file.startsWith('app')
     );
     const check = biome(consumer, ['check', '--error-on-warnings', ...files]);
     report(check.status === 0, `${name} features-pattern passes biome check`, check.output);
@@ -256,7 +259,7 @@ function checkFeaturesPattern(consumer) {
 // Helpers stay pure: the database client is reported in helpers.ts.
 function checkPureHelpers(consumer) {
   const message = 'Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.';
-  for (const name of ['typescript', 'next-monorepo']) {
+  for (const name of ENTRY_FILES) {
     useEntry(consumer, name);
     for (const kind of ['fail', 'pass']) {
       const { files, output, status } = lintCase(consumer, join(cases, 'helpers-pure', kind));
@@ -277,17 +280,31 @@ checkFireAndForget(consumer);
 checkFeaturesPattern(consumer);
 checkPureHelpers(consumer);
 
+function checkRule(consumer, entry, rule) {
+  const expected = messages(rule);
+  for (const kind of ['fail', 'pass']) {
+    const { files, output, status } = lintCase(consumer, join(cases, rule, kind));
+    const fired = expected.some((message) => output.includes(message));
+    const ok = kind === 'fail' ? fired : status === 0 && !output.includes('::');
+    report(ok, `${entry} ${rule} ${kind} (${files.join(', ')})`, output);
+  }
+}
+
 for (const [entry, rules] of Object.entries(ENTRIES)) {
   useEntry(consumer, entry);
   for (const rule of rules) {
-    const expected = messages(rule);
-    for (const kind of ['fail', 'pass']) {
-      const { files, output, status } = lintCase(consumer, join(cases, rule, kind));
-      const fired = expected.some((message) => output.includes(message));
-      const ok = kind === 'fail' ? fired : status === 0 && !output.includes('::');
-      report(ok, `${entry} ${rule} ${kind} (${files.join(', ')})`, output);
-    }
+    checkRule(consumer, entry, rule);
   }
+}
+
+// An opt-in rule is not in any entry point, and works once a project adds it.
+for (const rule of OPT_IN_RULES) {
+  useEntry(consumer, 'expo-app');
+  const { output } = lintCase(consumer, join(cases, rule, 'fail'));
+  const shipped = messages(rule).some((message) => output.includes(message));
+  report(!shipped, `${rule} is opt-in, not in expo-app`, output);
+  useEntry(consumer, 'expo-app', [rule]);
+  checkRule(consumer, 'expo-app + opt-in', rule);
 }
 
 rmSync(consumer, { force: true, recursive: true });
