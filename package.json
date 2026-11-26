@@ -1,0 +1,33 @@
+{
+  "name": "@anstapol/biome-config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared Biome config and grit rules for next-monorepo and expo-app projects.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    "./base": "./base.json",
+    "./next-monorepo": "./next-monorepo.json",
+    "./expo-app": "./expo-app.json",
+    "./rules/*": "./rules/*"
+  },
+  "files": [
+    "base.json",
+    "next-monorepo.json",
+    "expo-app.json",
+    "rules"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node test/run.js"
+  },
+  "peerDependencies": {
+    "@biomejs/biome": "2.5.15"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
