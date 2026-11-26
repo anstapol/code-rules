@@ -362,7 +362,12 @@
         "noDangerouslySetInnerHtmlWithChildren": "error",
         "noGlobalEval": "error",
         "noScriptUrl": "error",
-        "noSecrets": "error"
+        "noSecrets": {
+          "level": "error",
+          "options": {
+            "entropyThreshold": 70
+          }
+        }
       },
       "style": {
         "noCommonJs": "error",

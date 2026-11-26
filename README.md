@@ -21,7 +21,8 @@ Rules come first and code adjusts to them.
 
 - Every stable Biome rule in every group (`a11y`, `complexity`, `correctness`, `performance`, `security`, `style`, `suspicious`) is listed in `typescript.json` and set to `error`, not only the recommended set. `preset` is `none`, so nothing depends on Biome's defaults.
 - Each rule with options uses its strictest setting. Numeric limits use the stricter value of the projects this came from: cognitive complexity 10, 60 lines per function (120 in `.tsx`), 4 parameters.
-- A rule is turned off or relaxed only when the stack makes compliance impossible or wrong, and only at the narrowest scope: an `overrides` entry for the file pattern that needs it. Framework relaxations live in `next-monorepo` or `expo-app`. Every case is in the table below with its reason.
+- A rule is turned off or relaxed only for one of three reasons: (a) the stack makes compliance impossible or wrong, (b) two rules in the set contradict each other so no code can satisfy both, or (c) the rule is demonstrably buggy and flags correct code. Taste is not a reason. The relaxation uses the narrowest scope: a rule option, or an `overrides` entry for the file pattern that needs it. Framework relaxations live in `next-monorepo` or `expo-app`. Every case is in the table below with its reason.
+- A rule differs between entry points only when the stack forces it. Otherwise all project types share one convention.
 - Code that produces many diagnostics is never a reason to relax a rule. That is migration work in the project.
 - The nursery group is not turned on as a whole, because nursery rules change between Biome releases. A few nursery rules are picked by name: `noFloatingPromises`, `noMisusedPromises` and `useExhaustiveSwitchCases` in `typescript`, `useSortedClasses` in `next-monorepo`, `noReactNativeRawText` in `expo-app`.
 - Domains for frameworks none of these stacks use (`astro`, `qwik`, `solid`, `svelte`, `vue`) are set to `none`.
@@ -33,7 +34,9 @@ Rules come first and code adjusts to them.
 
 | Rule | Scope | Reason |
 | --- | --- | --- |
-| `useLiteralKeys` | off in `typescript` | Conflicts with `noPropertyAccessFromIndexSignature` in `tsconfig/strict.json`, which requires `record['key']` for index signatures. |
+| `useImportExtensions` | off in every entry point | (a) Bundler-resolved stacks import without extensions. Metro picks `button.ios.tsx` or `button.android.tsx` only for an extensionless specifier, and the rule's fix adds `.ts`, which `tsc` rejects without `allowImportingTsExtensions`. One stack cannot comply, so the convention is the same everywhere: no extensions. |
+| `noSecrets` | `entropyThreshold` raised from 41 to 70 | (c) At the default it reports ordinary identifier strings such as `'startOfUtcDay'`, `'toLocaleDateString'` and `'resolveStaleOpenFindingsByRunId'`. At 70 none of those fire, while GitHub, AWS and Slack tokens, JWTs and a random 32-character key still do. A low-entropy key such as `sk_live_…` with 24 random characters is no longer caught: run a secret scanner in CI as well. |
+| `useLiteralKeys` | off in `typescript` | (b) Conflicts with `noPropertyAccessFromIndexSignature` in `tsconfig/strict.json`, which requires `record['key']` for index signatures. |
 | `noTernary` | off in `typescript` | Style only. JSX has no statement-level conditional, so banning the one conditional expression forces `&&` chains or extra components. `noNestedTernary` stays on. |
 | `noJsxLiterals` | off in `typescript` | It exists to force UI text through an i18n catalog. These apps are not localised, and the rule cannot tell product copy from structural text such as punctuation and units. |
 | `noJsxPropsBind` | off in `typescript` | React Compiler memoizes inline handlers. The rule pushes `useCallback`, which `noRestrictedImports` bans. |
@@ -60,10 +63,21 @@ Rules come first and code adjusts to them.
 | `useAwait` | off in `**/actions.ts`, `**/actions/**` in `next-monorepo` | Next requires every server action to be `async`, even one with nothing to await. |
 | `noNodejsModules` | off in `next-monorepo` outside `**/components/**` and hooks | Server code in Next runs in Node. Components and hooks can reach the client bundle. |
 | `noUndeclaredVariables` | `PageProps`, `LayoutProps`, `RouteContext` declared as globals in `next-monorepo` | Next generates these global types in `.next/types`, which Biome does not read. |
-| `useImportExtensions` | off in `expo-app` | Metro picks `button.ios.tsx` or `button.android.tsx` only for an extensionless specifier. |
 | `useFilenamingConvention` | off in `**/app/**` in `expo-app` | Expo Router file names are fixed: `_layout.tsx`, `[id].tsx`, `+html.tsx`, `(tabs)`. |
 | `useComponentExportOnlyModules` | allows `ErrorBoundary`, `generateStaticParams`, `unstable_settings` in `**/app/**` in `expo-app` | Expo Router reads these from the route file. |
 | `noProcessGlobal` | off in `**/env.ts`, `**/keys.ts` in `expo-app` | Expo inlines only the global `process.env.EXPO_PUBLIC_*`. |
+
+### Rules kept on after review
+
+These looked like conflicts or false positives and are not:
+
+| Rule | Why it stays on |
+| --- | --- |
+| `noVoid` with `noFloatingPromises` | Both can be satisfied. An intentionally un-awaited promise handles its rejection: `save(value).catch(logFailure)`. `noFloatingPromises` accepts that, and nothing needs `void`. `pnpm test` checks it. |
+| `routes-only` on framework special files | Layouts, route handlers and Expo `_layout.tsx` can re-export from `features/`. Segment config such as `export const dynamic = 'force-dynamic'` is a plain value, which the rule does not report. |
+| `useExportsLast` | Taste, and code can always comply: declare helpers and components above the exports. |
+| `noImplicitBoolean` | Taste, and code can always comply: write `disabled={true}`. |
+| `noAwaitInLoops` | Sequential work is written as a `reduce` over a promise, or a helper such as `inSequence(items, run)`, so the order is explicit. |
 
 ## Formatter and assist
 
@@ -99,7 +113,7 @@ Extend the strict config from the project's `tsconfig.json`, after the framework
 
 It turns on `strict` plus `allowUnreachableCode: false`, `allowUnusedLabels: false`, `checkJs`, `erasableSyntaxOnly`, `exactOptionalPropertyTypes`, `forceConsistentCasingInFileNames`, `isolatedModules`, `moduleDetection: force`, `noFallthroughCasesInSwitch`, `noImplicitOverride`, `noImplicitReturns`, `noPropertyAccessFromIndexSignature`, `noUncheckedIndexedAccess`, `noUncheckedSideEffectImports`, `noUnusedLocals`, `noUnusedParameters` and `verbatimModuleSyntax`. All are accepted by TypeScript 6.0 and 7.0.
 
-It sets no `target`, `module`, `lib`, `jsx` or `paths`; those belong to the framework base. `useImportExtensions` wants explicit extensions on relative and alias imports, so a bundled app also sets `allowImportingTsExtensions` with `noEmit`, and a library that emits sets `rewriteRelativeImportExtensions`. `isolatedDeclarations` is left out because it needs `declaration` output; a published library should add it.
+It sets no `target`, `module`, `lib`, `jsx` or `paths`; those belong to the framework base. Imports have no extensions, so neither `allowImportingTsExtensions` nor `rewriteRelativeImportExtensions` is needed. `isolatedDeclarations` is left out because it needs `declaration` output; a published library should add it.
 
 ## Install
 
@@ -191,6 +205,7 @@ The test installs this package from its local path into a temporary project and 
 - every built entry point parses and loads in Biome;
 - `typescript.json` lists every stable rule, and every rule it turns off has a row in this README;
 - an ordinary React component (`className`, a text child, a hook) passes `biome check` under `typescript` and `next-monorepo`, and `biome check --write --unsafe` leaves it unchanged;
+- a fire-and-forget call handled with `.catch()` passes under every entry point, so `noVoid` and `noFloatingPromises` can both be satisfied;
 - each fail fixture reports its rule and each pass fixture lints clean under every entry point that ships the rule.
 
 It needs `git` and `pnpm` on the path.

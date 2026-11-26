@@ -308,12 +308,7 @@
         "useGraphqlNamedOperations": "error",
         "useHookAtTopLevel": "error",
         "useImageSize": "error",
-        "useImportExtensions": {
-          "level": "error",
-          "options": {
-            "forceJsExtensions": false
-          }
-        },
+        "useImportExtensions": "off",
         "useInlineScriptId": "error",
         "useIsNan": "error",
         "useJsonImportAttributes": "error",
@@ -375,7 +370,12 @@
         "noDangerouslySetInnerHtmlWithChildren": "error",
         "noGlobalEval": "error",
         "noScriptUrl": "error",
-        "noSecrets": "error"
+        "noSecrets": {
+          "level": "error",
+          "options": {
+            "entropyThreshold": 70
+          }
+        }
       },
       "style": {
         "noCommonJs": "error",

@@ -226,6 +226,18 @@ function checkReactComponent(consumer) {
   }
 }
 
+// noVoid and noFloatingPromises are both on. An intentionally un-awaited
+// promise satisfies both by handling its rejection with .catch().
+function checkFireAndForget(consumer) {
+  const fixture = join(cases, 'fire-and-forget');
+  for (const name of ENTRY_FILES) {
+    useEntry(consumer, name);
+    const files = placeFixture(consumer, fixture);
+    const check = biome(consumer, ['check', '--error-on-warnings', ...files]);
+    report(check.status === 0, `${name} fire-and-forget passes biome check`, check.output);
+  }
+}
+
 const build = run('node', [join(root, 'scripts/build.js'), '--check'], root);
 must(build, 'Entry points are stale. pnpm build');
 
@@ -233,6 +245,7 @@ checkRuleCoverage();
 const consumer = setUpConsumer();
 checkEntryPoints(consumer);
 checkReactComponent(consumer);
+checkFireAndForget(consumer);
 
 for (const [entry, rules] of Object.entries(ENTRIES)) {
   useEntry(consumer, entry);

@@ -1,4 +1,4 @@
-import { Button } from '@/features/ui/components/button.tsx';
+import { Button } from '@/features/ui/components/button';
 
 export function Actions() {
   return (

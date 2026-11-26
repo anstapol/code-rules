@@ -2,9 +2,6 @@
   "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "linter": {
     "rules": {
-      "correctness": {
-        "useImportExtensions": "off"
-      },
       "nursery": {
         "noReactNativeRawText": "error"
       },
