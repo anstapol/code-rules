@@ -1,6 +1,6 @@
 {
   "name": "@anstapol/code-rules",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Strict shared Biome and TypeScript config, with grit rules, for TypeScript, Next.js monorepo and Expo projects.",
   "license": "UNLICENSED",
