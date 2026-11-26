@@ -1,0 +1,15 @@
+language js
+
+// Only the kit in features/ui wraps the React Native text, image and input
+// primitives, so type, colour and loading states stay in one place.
+JsImport() as $import where {
+  $import <: r"[\s\S]*from ['\"]react-native['\"];?",
+  $import <: contains JsShorthandNamedImportSpecifier() as $primitive where {
+    $primitive <: or {
+      r"^Text$",
+      r"^Image$",
+      r"^TextInput$"
+    }
+  },
+  register_diagnostic(span=$primitive, message="Use the kit's Text, image and text field components from features/ui. Only features/ui wraps the React Native primitive.")
+}

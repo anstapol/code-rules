@@ -1,0 +1,8 @@
+language js
+
+// One main action per screen. Checked per return, the closest static stand-in
+// for one rendered screen.
+JsReturnStatement() as $return where {
+  $return <: r"[\s\S]*variant=\"primary\"[\s\S]*variant=\"primary\"[\s\S]*",
+  register_diagnostic(span=$return, message="One primary button per screen. Make the others secondary, tinted or plain.")
+}

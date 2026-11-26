@@ -1,0 +1,8 @@
+language js
+
+// Red is for destructive actions and errors only, so it is reached through
+// the kit's danger variants, never painted directly.
+JsStaticMemberExpression() as $member where {
+  $member <: r"[\s\S]*\bcolors\.danger",
+  register_diagnostic(span=$member, message="Red means destructive or error. Use a kit component from features/ui with its danger variant.")
+}
