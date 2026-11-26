@@ -2,7 +2,7 @@
 
 Strict shared lint, format and compiler config for my TypeScript projects. It ships Biome config, grit rules and a TypeScript `tsconfig`.
 
-The structure it enforces is the features pattern described in [Features pattern](#features-pattern). Database access, route files and import paths are not restricted beyond that pattern, except in `expo-app`.
+The structure it enforces is the features pattern described in [Features pattern](#features-pattern). The pattern is the same in every entry point. Database access, route files and import paths are not restricted beyond it.
 
 It needs Biome 2.5.15 exactly. Biome is a peer dependency, so the project installs it.
 
@@ -12,7 +12,7 @@ It needs Biome 2.5.15 exactly. Biome is a peer dependency, so the project instal
 | --- | --- | --- |
 | `@anstapol/code-rules/typescript` | `typescript.json` | The shared layer for any TypeScript project that renders with React or has no UI. Formatter, assist, every stable lint rule, and the features-pattern rules. Safe for a plain React app with no Next.js and no React Native, such as a TanStack Start app. |
 | `@anstapol/code-rules/next-monorepo` | `next-monorepo.json` | `typescript` plus Next.js and Turborepo: Next.js domain rules, `process.env` access, default exports where the framework loads them, package entry points, pure helpers without framework I/O, Tailwind class sorting. |
-| `@anstapol/code-rules/expo-app` | `expo-app.json` | `typescript` plus Expo and React Native: route files that only re-export, `@/` imports instead of `../`, the database client only in `db/`, `database/` or repositories, theme colours and numbers, the kit in `features/ui`, `Pressable` roles, lucide imports, Unistyles. |
+| `@anstapol/code-rules/expo-app` | `expo-app.json` | `typescript` plus Expo and React Native: raw text outside `<Text>`, Expo Router file names and default exports, the global `process` in `env.ts` and `keys.ts`, no `react-native` in helpers, `Pressable` roles, lucide imports by path. |
 | `@anstapol/code-rules/tsconfig/strict.json` | `tsconfig/strict.json` | Strict TypeScript compiler options. |
 
 A project extends one Biome entry point. `next-monorepo` and `expo-app` already contain all of `typescript`.
@@ -24,7 +24,7 @@ Rules come first and code adjusts to them.
 - Every stable Biome rule in every group (`a11y`, `complexity`, `correctness`, `performance`, `security`, `style`, `suspicious`) is listed in `typescript.json` and set to `error`, not only the recommended set. `preset` is `none`, so nothing depends on Biome's defaults.
 - Each rule with options uses its strictest setting. Numeric limits use the stricter value of the projects this came from: cognitive complexity 10, 60 lines per function (120 in `.tsx`), 4 parameters.
 - A rule is turned off or relaxed only for one of three reasons: (a) the stack makes compliance impossible or wrong, (b) two rules in the set contradict each other so no code can satisfy both, or (c) the rule is demonstrably buggy and flags correct code. Taste is not a reason. The relaxation uses the narrowest scope: a rule option, or an `overrides` entry for the file pattern that needs it. Framework relaxations live in `next-monorepo` or `expo-app`. Every case is in the table below with its reason.
-- A rule differs between entry points only when the stack forces it. Otherwise all project types share one convention. The one exception is structure: `typescript` and `next-monorepo` enforce only the features pattern, and the stricter layout rules of the Expo stack (route files, `../` imports, where the database client may be imported) live in `expo-app`.
+- A rule differs between entry points only when the stack forces it. Otherwise all project types share one convention. Structure is never stack-specific: the features pattern lives in `typescript`, and `next-monorepo` and `expo-app` add only rules their framework needs.
 - Code that produces many diagnostics is never a reason to relax a rule. That is migration work in the project.
 - The nursery group is not turned on as a whole, because nursery rules change between Biome releases. A few nursery rules are picked by name: `noFloatingPromises`, `noMisusedPromises` and `useExhaustiveSwitchCases` in `typescript`, `useSortedClasses` in `next-monorepo`, `noReactNativeRawText` in `expo-app`.
 - Domains for frameworks none of these stacks use (`astro`, `qwik`, `solid`, `svelte`, `vue`) are set to `none`.
@@ -50,7 +50,7 @@ Rules come first and code adjusts to them.
 | `noBeforeInteractiveScriptOutsideDocument`, `noDocumentImportInPage`, `noHeadElement`, `noHeadImportInDocument`, `noImgElement`, `noNextAsyncClientComponent`, `noSyncScripts`, `noUnwantedPolyfillio`, `useGoogleFontPreconnect`, `useInlineScriptId` | off in `typescript`, `error` in `next-monorepo` | Next.js rules. A plain React or Expo app has no `next/image` or `next/head` to use instead. |
 | `noUndeclaredEnvVars` | off in `typescript`, `error` in `next-monorepo` | Turborepo rule. It checks variables against `turbo.json`, which only the monorepo has. |
 | `noExcessiveLinesPerFunction` | 120 lines in `**/*.tsx` | JSX markup puts one attribute per line under the formatter. |
-| `useComponentExportOnlyModules` | off outside `**/features/*/components/**` and `**/src/*/components/**` in `typescript` and `next-monorepo`, `error` everywhere in `expo-app` | Part of the features pattern: component folders export components only. Route files, hooks and helpers export other things by design. |
+| `useComponentExportOnlyModules` | off outside `**/features/*/components/**` and `**/src/*/components/**` | Part of the features pattern: component folders export components only. Route files, hooks and helpers export other things by design. |
 | `noProcessEnv` | off in `**/env.ts`, `**/keys.ts` | These files are where the environment is read and validated. |
 | `noCommonJs` | off in `**/*.cjs` | A `.cjs` file is CommonJS by definition. |
 | `noDefaultExport`, `noMagicNumbers`, `noProcessEnv` | off in `**/*.config.{ts,mts,cts,js,mjs,cjs}` | Tools load the config's default export. Ports, timeouts and sizes are configuration, and a config reads its environment. |
@@ -58,7 +58,6 @@ Rules come first and code adjusts to them.
 | `noConsole`, `noProcessEnv` | off in `**/scripts/**` | A CLI script prints to the terminal and reads its own environment. |
 | `noExcessiveLinesPerFunction`, `noMagicNumbers`, `useTopLevelRegex`, `noDefaultExport`, `noProcessEnv` | off in tests (`**/*.{test,spec}.{ts,tsx}`, `**/e2e/**`, `**/test/**`) | A `describe` callback holds the whole suite, fixtures are literal data, assertion patterns sit next to the assertion, test runners load default exports, and tests set up their own environment. |
 | `noUndeclaredDependencies` | dev dependencies allowed only in tests, config files, scripts and `.d.ts` files | Tightened, not relaxed: app code may only import `dependencies` and `peerDependencies`. |
-| `noRestrictedImports` | replaced in `**/db/**`, `**/database/**`, `**/repositories.ts`, `**/repositories/**` in `expo-app` | In the Expo stack the database layer is the one place that imports the database client. |
 | `noProcessEnv`, `noProcessGlobal` | off in `next-monorepo` | Next inlines only the global `process.env.NEXT_PUBLIC_*`. The `no-private-process-env` grit rule replaces them and allows only `NEXT_PUBLIC_*` and `NEXT_RUNTIME` outside `env.ts`, `keys.ts`, config files, `next-config.ts`, `prisma/`, scripts and tests. |
 | `noDefaultExport`, `noExportedImports` | off in `**/app/**` in `next-monorepo` and `expo-app` | The router loads each route file's default export, and route files re-export. |
 | `noDefaultExport`, `noExportedImports` | off in `**/emails/**`, `**/email/templates/**`, `**/mdx-components.tsx`, `**/mdx-layout.tsx` in `next-monorepo` | React Email and MDX load the default export. |
@@ -68,7 +67,6 @@ Rules come first and code adjusts to them.
 | `noNodejsModules` | off in `next-monorepo` outside `**/components/**` and hooks | Server code in Next runs in Node. Components and hooks can reach the client bundle. |
 | `noUndeclaredVariables` | `PageProps`, `LayoutProps`, `RouteContext` declared as globals in `next-monorepo` | Next generates these global types in `.next/types`, which Biome does not read. |
 | `useFilenamingConvention` | off in `**/app/**` in `expo-app` | Expo Router file names are fixed: `_layout.tsx`, `[id].tsx`, `+html.tsx`, `(tabs)`. |
-| `useComponentExportOnlyModules` | allows `ErrorBoundary`, `generateStaticParams`, `unstable_settings` in `**/app/**` in `expo-app` | Expo Router reads these from the route file. |
 | `noProcessGlobal` | off in `**/env.ts`, `**/keys.ts` in `expo-app` | Expo inlines only the global `process.env.EXPO_PUBLIC_*`. |
 
 ### Rules kept on after review
@@ -78,7 +76,6 @@ These looked like conflicts or false positives and are not:
 | Rule | Why it stays on |
 | --- | --- |
 | `noVoid` with `noFloatingPromises` | Both can be satisfied. An intentionally un-awaited promise handles its rejection: `save(value).catch(logFailure)`. `noFloatingPromises` accepts that, and nothing needs `void`. `pnpm test` checks it. |
-| `routes-only` on framework special files in `expo-app` | Layouts and `_layout.tsx` can re-export from `features/`. A plain value export is not reported. |
 | `useExportsLast` | Taste, and code can always comply: declare helpers and components above the exports. |
 | `noImplicitBoolean` | Taste, and code can always comply: write `disabled={true}`. |
 | `noAwaitInLoops` | Sequential work is written as a `reduce` over a promise, or a helper such as `inSequence(items, run)`, so the order is explicit. |
@@ -101,25 +98,40 @@ Each app keeps its code in `features/<feature>/`. A workspace package that share
 | `queries/` or `queries.ts` | Reads. | |
 | `schemas.ts`, `schemas/` | Exports end in `Schema`. | `schemas-only` |
 | `constants.ts` | Values only, `CONSTANT_CASE` names. | `no-functions-in-constants`, `useNamingConvention` |
-| `helpers.ts`, `helpers/` | Pure functions: no React and no database client. `next-monorepo` also bans `next/cache`, `next/headers` and `server-only`. | `noRestrictedImports` |
+| `helpers.ts`, `helpers/` | Pure functions: no React and no database client. `next-monorepo` also bans `next/cache`, `next/headers` and `server-only`, `expo-app` bans `react-native`. | `noRestrictedImports` |
 | `server.ts` | Server code and writes. The database client is imported here, in `queries/` and in `actions/`. | |
 | `tools.ts`, `tools/` | Model tools. Exports end in `Tools`, no database client. `defineTool` is called only here. | `tools-only`, `define-tool-in-tools`, `noRestrictedImports` |
 | `types.ts` | Types only. | `types-only` |
 
-The role rules match by path: `**/features/**/<file>` and `**/src/*/<file>`, except `constants.ts`, which counts anywhere. Tests are excluded. The database client is any `@*/database/client` import.
+The role rules match by path: `**/features/**/<file>` and `**/src/*/<file>`, except `constants.ts`, which counts anywhere. Tests are excluded. The database client is `@prisma/client`, `drizzle-orm`, `expo-sqlite` or any `@*/database/client` import.
 
-Imports may be relative, `../` included. Route files under `app/` may define their page or handler. Neither is restricted in `typescript` or `next-monorepo`.
+Imports may be relative, `../` included. Route files under `app/` may define their page or handler. Neither is restricted in any entry point.
 
 Other shared conventions in `typescript`: no `dayjs` or `moment` (use `date-fns`), no `lodash` or `underscore`, no `memo`, `useCallback` or `useMemo` (React Compiler memoizes), no inline style objects, one `variant="primary"` button per returned screen, kebab-case file names.
 
-### Extra structure in `expo-app`
+### Opt-in rules
 
-`expo-app` adds the layout rules of the Expo stack on top of the features pattern:
+These grit rules ship in `rules/` but no entry point turns them on. They encode one project's design system or layout, so a project that wants one adds it in its own `biome.json` for the paths it chooses:
 
-- route files under `app/` only re-export (`routes-only`);
-- imports use the `@/` alias, never `../`;
-- the database client (`@prisma/client`, `drizzle-orm`, `expo-sqlite` or `@*/database/client`) is imported only in `db/`, `database/` or repositories, and helpers do not import repositories or Expo modules;
-- every module that exports a component exports components only.
+| Rule | What it reports |
+| --- | --- |
+| `routes-only` | Anything but re-exports in a route file. |
+| `no-raw-colors` | Colour literals outside the theme. |
+| `no-raw-numbers` | Number literals inside object literals, such as sizes and timings. |
+| `no-raw-primitives` | React Native primitives outside the UI kit. |
+| `danger-in-kit` | Danger styling outside the UI kit and theme. |
+
+```json
+{
+  "extends": ["@anstapol/code-rules/expo-app"],
+  "overrides": [
+    {
+      "includes": ["**/app/**"],
+      "plugins": ["./node_modules/@anstapol/code-rules/rules/routes-only.grit"]
+    }
+  ]
+}
+```
 
 ## Strict TypeScript
 
@@ -230,8 +242,9 @@ The test installs this package from its local path into a temporary project and 
 - `typescript.json` lists every stable rule, and every rule it turns off has a row in this README;
 - an ordinary React component (`className`, a text child, a hook) passes `biome check` under `typescript` and `next-monorepo`, and `biome check --write --unsafe` leaves it unchanged;
 - a fire-and-forget call handled with `.catch()` passes under every entry point, so `noVoid` and `noFloatingPromises` can both be satisfied;
-- a small feature with relative imports, the database client in `server.ts` and a page component in a route file passes under `typescript` and `next-monorepo`;
-- a helper that imports the database client is reported under `typescript` and `next-monorepo`;
+- a small feature with relative imports, the database client in `server.ts` and a page component in a route file passes under every entry point (the route file under `next-monorepo` and `expo-app`);
+- a helper that imports the database client is reported under every entry point;
+- each opt-in rule is off in every entry point and reports its fail fixture once a project adds it;
 - each fail fixture reports its rule and each pass fixture lints clean under every entry point that ships the rule.
 
 It needs `git` and `pnpm` on the path.
