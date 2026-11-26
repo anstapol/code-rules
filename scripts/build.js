@@ -1,5 +1,6 @@
 // Biome 2.5.15 ignores `extends` inside a config that is itself extended, so
-// each entry point is written out flat: src/base.json merged with the type file.
+// each entry point is written out flat: src/typescript.json merged with the
+// type file. base.json is a deprecated copy of typescript.json.
 // Run with --check to fail when the committed entry points are stale.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -32,11 +33,12 @@ function isPlainObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-const base = read('base');
+const typescript = read('typescript');
 const entries = {
-  base,
-  'expo-app': merge(base, read('expo-app')),
-  'next-monorepo': merge(base, read('next-monorepo'))
+  base: typescript,
+  'expo-app': merge(typescript, read('expo-app')),
+  'next-monorepo': merge(typescript, read('next-monorepo')),
+  typescript
 };
 
 const check = process.argv.includes('--check');
