@@ -246,6 +246,20 @@ function checkPureHelpers(consumer) {
   }
 }
 
+// A Next metadata image route may re-export its sibling, as twitter-image.tsx
+// does with opengraph-image.tsx. Any other re-export in app/ is still a barrel.
+function checkMetadataImages(consumer) {
+  for (const name of ['next-monorepo', 'next-site']) {
+    useEntry(consumer, name);
+    for (const kind of ['fail', 'pass']) {
+      const { files, output, status } = lintCase(consumer, join(cases, 'metadata-images', kind));
+      const ok =
+        kind === 'fail' ? output.includes('noBarrelFile') : status === 0 && !output.includes('::');
+      report(ok, `${name} metadata-images ${kind} (${files.join(', ')})`, output);
+    }
+  }
+}
+
 const build = run('node', [join(root, 'scripts/build.js'), '--check'], root);
 must(build, 'Entry points are stale. pnpm build');
 
@@ -257,6 +271,7 @@ checkReactComponent(consumer);
 checkFireAndForget(consumer);
 checkFeaturesPattern(consumer);
 checkPureHelpers(consumer);
+checkMetadataImages(consumer);
 
 function checkRule(consumer, entry, rule) {
   const expected = messages(rule);

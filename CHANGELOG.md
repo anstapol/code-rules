@@ -8,7 +8,11 @@
 - The features pattern is the same as in every other entry point.
 - The shared Next.js rules live in `src/next.json`. `next-monorepo` and `next-site` both build from it. `next-monorepo.json` has the same rules as in v0.2.0, with its overrides in a different order.
 
-No rule changed in an existing entry point, so code that passed v0.2.0 still passes.
+### Rules
+
+- `next-site` and `next-monorepo` turn off `noBarrelFile` and `noReExportAll` in Next metadata image routes: `**/app/**/opengraph-image.tsx`, `**/app/**/twitter-image.tsx`, `**/app/**/icon.tsx` and `**/app/**/apple-icon.tsx`. A `twitter-image.tsx` that re-exports its `opengraph-image.tsx` now passes.
+
+This only relaxes rules, so code that passed v0.2.0 still passes.
 
 ## v0.2.0
 

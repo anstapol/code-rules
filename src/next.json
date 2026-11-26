@@ -74,6 +74,22 @@
     },
     {
       "includes": [
+        "**/app/**/apple-icon.tsx",
+        "**/app/**/icon.tsx",
+        "**/app/**/opengraph-image.tsx",
+        "**/app/**/twitter-image.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off",
+            "noReExportAll": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
         "**/prisma/**"
       ],
       "linter": {

@@ -48,6 +48,7 @@ A project extends one Biome entry point. `next-site`, `next-monorepo` and `expo-
 | `noExcessiveLinesPerFunction`, `noMagicNumbers`, `useTopLevelRegex`, `noDefaultExport` | off in tests (`**/*.{test,spec}.{ts,tsx}`, `**/e2e/**`, `**/test/**`) | A `describe` callback holds the whole suite, fixtures are literal data, assertion patterns sit next to the assertion, and test runners load default exports. Tests also declare the Jest globals (`describe`, `it`, `test`, `expect`, `jest` and the hooks). |
 | `noDefaultExport`, `noExportedImports` | off in `**/app/**`, `**/emails/**`, `**/email/templates/**`, `**/mdx-components.tsx`, `**/mdx-layout.tsx` in `next-site` and `next-monorepo` | Next, React Email and MDX load the default export, and route files re-export. |
 | `noBarrelFile`, `noReExportAll` | off in `packages/*/src/index.ts`, `packages/*/src/*/index.ts`, `packages/*/src/*/server.ts`, `tooling/*/index.ts` in `next-monorepo` | A workspace package's public entry points. A shared feature in `packages/*/src/<feature>/` exposes client-safe code through `index.ts` and server code through `server.ts`. |
+| `noBarrelFile`, `noReExportAll` | off in `**/app/**/opengraph-image.tsx`, `**/app/**/twitter-image.tsx`, `**/app/**/icon.tsx`, `**/app/**/apple-icon.tsx` in `next-site` and `next-monorepo` | A Next metadata image route may re-export its sibling, as `twitter-image.tsx` does with `opengraph-image.tsx`. |
 | `noConsole` | off in `**/prisma/**` in `next-site` and `next-monorepo` | Seed scripts print progress. |
 | `noDefaultExport`, `noMagicNumbers` | off in `**/next-config.ts` in `next-monorepo` | A shared Next config factory, loaded like a config file. |
 | `noDefaultExport`, `noExportedImports`, `useFilenamingConvention` | off in `**/app/**` in `expo-app` | Expo Router loads the default export, and its file names are fixed: `_layout.tsx`, `[id].tsx`, `+html.tsx`, `(tabs)`. |
@@ -188,6 +189,7 @@ The test installs this package from its local path into a temporary project and 
 - a small feature with relative imports, the database client in `server.ts` and a page component in a route file passes under every entry point (the route file under `next-site`, `next-monorepo` and `expo-app`);
 - `next-site` has the same rules as `next-monorepo` and no workspace paths;
 - a helper that imports the database client is reported under every entry point;
+- a metadata image route that re-exports its sibling passes under `next-site` and `next-monorepo`, and any other re-export in `app/` is still reported;
 - each grit rule's fail fixture reports its message and its pass fixture lints clean under every entry point that ships the rule.
 
 It needs `git` and `pnpm` on the path.
