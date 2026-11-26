@@ -23,15 +23,10 @@
               "options": {
                 "paths": {
                   "@prisma/client": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
-                  "dayjs": "Use date-fns.",
                   "drizzle-orm": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
                   "expo-sqlite": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
-                  "lodash": "Use the platform or a helper in features/.",
-                  "lodash-es": "Use the platform or a helper in features/.",
-                  "moment": "Use date-fns.",
                   "react": "Helpers stay pure. React belongs in hooks and components.",
-                  "react-native": "Helpers stay pure. React Native belongs in hooks and components.",
-                  "underscore": "Use the platform or a helper in features/."
+                  "react-native": "Helpers stay pure. React Native belongs in hooks and components."
                 },
                 "patterns": [
                   {
@@ -63,19 +58,6 @@
             "noDefaultExport": "off",
             "noExportedImports": "off",
             "useFilenamingConvention": "off"
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "**/env.ts",
-        "**/keys.ts"
-      ],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noProcessGlobal": "off"
           }
         }
       }

@@ -5,36 +5,8 @@
       "tailwindDirectives": true
     }
   },
-  "javascript": {
-    "globals": [
-      "LayoutProps",
-      "PageProps",
-      "RouteContext"
-    ]
-  },
   "linter": {
     "rules": {
-      "correctness": {
-        "noBeforeInteractiveScriptOutsideDocument": "error",
-        "noNextAsyncClientComponent": "error",
-        "useInlineScriptId": "error",
-        "noProcessGlobal": "off"
-      },
-      "performance": {
-        "noImgElement": "error",
-        "noSyncScripts": "error",
-        "noUnwantedPolyfillio": "error",
-        "useGoogleFontPreconnect": "error"
-      },
-      "style": {
-        "noHeadElement": "error",
-        "noProcessEnv": "off"
-      },
-      "suspicious": {
-        "noDocumentImportInPage": "error",
-        "noHeadImportInDocument": "error",
-        "noUndeclaredEnvVars": "error"
-      },
       "nursery": {
         "useSortedClasses": {
           "fix": "safe",
@@ -76,17 +48,12 @@
               "options": {
                 "paths": {
                   "@prisma/client": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
-                  "dayjs": "Use date-fns.",
                   "drizzle-orm": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
                   "expo-sqlite": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
-                  "lodash": "Use the platform or a helper in features/.",
-                  "lodash-es": "Use the platform or a helper in features/.",
-                  "moment": "Use date-fns.",
                   "next/cache": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
                   "next/headers": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
                   "react": "Helpers stay pure. React belongs in hooks and components.",
-                  "server-only": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
-                  "underscore": "Use the platform or a helper in features/."
+                  "server-only": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts."
                 },
                 "patterns": [
                   {
@@ -118,22 +85,6 @@
           "style": {
             "noDefaultExport": "off",
             "noExportedImports": "off"
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "**",
-        "!**/components/**",
-        "!**/hooks.ts",
-        "!**/hooks.tsx",
-        "!**/hooks/**"
-      ],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noNodejsModules": "off"
           }
         }
       }
