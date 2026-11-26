@@ -50,7 +50,7 @@ const ENTRIES = {
     'pressable-role',
     'routes-only'
   ],
-  'next-monorepo': [...TYPESCRIPT_RULES, 'no-private-process-env', 'routes-only'],
+  'next-monorepo': [...TYPESCRIPT_RULES, 'no-private-process-env'],
   typescript: TYPESCRIPT_RULES
 };
 
@@ -110,6 +110,7 @@ function setUpConsumer() {
   // manifest for noUndeclaredDependencies and to turn on the React domain.
   const manifest = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
   manifest.dependencies = {
+    '@acme/database': '*',
     'lucide-react-native': '*',
     next: '*',
     react: '*',
@@ -238,6 +239,33 @@ function checkFireAndForget(consumer) {
   }
 }
 
+// The features pattern: relative imports and the database client in server.ts
+// pass in any project, and a Next route file may define its page component.
+function checkFeaturesPattern(consumer) {
+  const fixture = join(cases, 'features-pattern');
+  for (const name of ['typescript', 'next-monorepo']) {
+    useEntry(consumer, name);
+    const files = placeFixture(consumer, fixture).filter(
+      (file) => name === 'next-monorepo' || !file.startsWith('app')
+    );
+    const check = biome(consumer, ['check', '--error-on-warnings', ...files]);
+    report(check.status === 0, `${name} features-pattern passes biome check`, check.output);
+  }
+}
+
+// Helpers stay pure: the database client is reported in helpers.ts.
+function checkPureHelpers(consumer) {
+  const message = 'Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.';
+  for (const name of ['typescript', 'next-monorepo']) {
+    useEntry(consumer, name);
+    for (const kind of ['fail', 'pass']) {
+      const { files, output, status } = lintCase(consumer, join(cases, 'helpers-pure', kind));
+      const ok = kind === 'fail' ? output.includes(message) : status === 0 && !output.includes('::');
+      report(ok, `${name} helpers-pure ${kind} (${files.join(', ')})`, output);
+    }
+  }
+}
+
 const build = run('node', [join(root, 'scripts/build.js'), '--check'], root);
 must(build, 'Entry points are stale. pnpm build');
 
@@ -246,6 +274,8 @@ const consumer = setUpConsumer();
 checkEntryPoints(consumer);
 checkReactComponent(consumer);
 checkFireAndForget(consumer);
+checkFeaturesPattern(consumer);
+checkPureHelpers(consumer);
 
 for (const [entry, rules] of Object.entries(ENTRIES)) {
   useEntry(consumer, entry);
