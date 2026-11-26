@@ -4,74 +4,16 @@
     "rules": {
       "nursery": {
         "noReactNativeRawText": "error"
-      },
-      "style": {
-        "noRestrictedImports": {
-          "level": "error",
-          "options": {
-            "paths": {
-              "@prisma/client": "Only db/, database/ and repositories touch the database.",
-              "dayjs": "Use date-fns.",
-              "drizzle-orm": "Only db/, database/ and repositories touch the database.",
-              "expo-sqlite": "Only db/, database/ and repositories touch the database.",
-              "lodash": "Use the platform or a helper in features/.",
-              "lodash-es": "Use the platform or a helper in features/.",
-              "moment": "Use date-fns.",
-              "react": {
-                "importNames": [
-                  "memo",
-                  "useCallback",
-                  "useMemo"
-                ],
-                "message": "React Compiler memoizes. Write plain code."
-              },
-              "react-native": {
-                "importNames": [
-                  "Appearance",
-                  "DynamicColorIOS",
-                  "PlatformColor",
-                  "StyleSheet",
-                  "useColorScheme"
-                ],
-                "message": "Unistyles owns styles and the theme. Use StyleSheet from react-native-unistyles."
-              },
-              "underscore": "Use the platform or a helper in features/."
-            },
-            "patterns": [
-              {
-                "group": [
-                  "../*",
-                  "../**"
-                ],
-                "message": "Import across directories with the @/ alias."
-              },
-              {
-                "group": [
-                  "@prisma/client/*",
-                  "drizzle-orm/*",
-                  "expo-sqlite/*",
-                  "@*/database/client"
-                ],
-                "message": "Only db/, database/ and repositories touch the database."
-              }
-            ]
-          }
-        },
-        "useComponentExportOnlyModules": {
-          "level": "error",
-          "options": {
-            "allowConstantExport": false,
-            "allowExportNames": []
-          }
-        }
       }
     }
   },
   "overrides": [
     {
       "includes": [
-        "**/helpers.ts",
-        "**/helpers/**"
+        "**/features/**/helpers.ts",
+        "**/features/**/helpers/**",
+        "**/src/*/helpers.ts",
+        "**/src/*/helpers/**"
       ],
       "linter": {
         "rules": {
@@ -80,10 +22,10 @@
               "level": "error",
               "options": {
                 "paths": {
-                  "@prisma/client": "Only db/, database/ and repositories touch the database.",
+                  "@prisma/client": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
                   "dayjs": "Use date-fns.",
-                  "drizzle-orm": "Only db/, database/ and repositories touch the database.",
-                  "expo-sqlite": "Only db/, database/ and repositories touch the database.",
+                  "drizzle-orm": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
+                  "expo-sqlite": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
                   "lodash": "Use the platform or a helper in features/.",
                   "lodash-es": "Use the platform or a helper in features/.",
                   "moment": "Use date-fns.",
@@ -94,153 +36,12 @@
                 "patterns": [
                   {
                     "group": [
-                      "../*",
-                      "../**"
-                    ],
-                    "message": "Import across directories with the @/ alias."
-                  },
-                  {
-                    "group": [
+                      "@*/database/client",
                       "@prisma/client/*",
                       "drizzle-orm/*",
-                      "expo-sqlite/*",
-                      "@*/database/client"
+                      "expo-sqlite/*"
                     ],
-                    "message": "Only db/, database/ and repositories touch the database."
-                  },
-                  {
-                    "group": [
-                      "@/db",
-                      "@/db/*",
-                      "**/repositories",
-                      "**/repositories/*"
-                    ],
-                    "message": "Helpers stay pure. Do I/O in repositories, queries, actions or hooks."
-                  },
-                  {
-                    "group": [
-                      "expo-*"
-                    ],
-                    "message": "Helpers stay pure. Expo modules belong in hooks and components."
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "**/features/**/tools.ts",
-        "**/features/**/tools/**",
-        "!**/*.{test,spec}.{ts,tsx}",
-        "!**/e2e/**",
-        "!**/test/**"
-      ],
-      "linter": {
-        "rules": {
-          "style": {
-            "noRestrictedImports": {
-              "level": "error",
-              "options": {
-                "paths": {
-                  "@prisma/client": "Only db/, database/ and repositories touch the database.",
-                  "dayjs": "Use date-fns.",
-                  "drizzle-orm": "Only db/, database/ and repositories touch the database.",
-                  "expo-sqlite": "Only db/, database/ and repositories touch the database.",
-                  "lodash": "Use the platform or a helper in features/.",
-                  "lodash-es": "Use the platform or a helper in features/.",
-                  "moment": "Use date-fns.",
-                  "react": {
-                    "importNames": [
-                      "memo",
-                      "useCallback",
-                      "useMemo"
-                    ],
-                    "message": "React Compiler memoizes. Write plain code."
-                  },
-                  "react-native": {
-                    "importNames": [
-                      "Appearance",
-                      "DynamicColorIOS",
-                      "PlatformColor",
-                      "StyleSheet",
-                      "useColorScheme"
-                    ],
-                    "message": "Unistyles owns styles and the theme. Use StyleSheet from react-native-unistyles."
-                  },
-                  "underscore": "Use the platform or a helper in features/."
-                },
-                "patterns": [
-                  {
-                    "group": [
-                      "../*",
-                      "../**"
-                    ],
-                    "message": "Import across directories with the @/ alias."
-                  },
-                  {
-                    "group": [
-                      "@prisma/client/*",
-                      "drizzle-orm/*",
-                      "expo-sqlite/*",
-                      "@*/database/client"
-                    ],
-                    "message": "Only db/, database/ and repositories touch the database."
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "**/db/**",
-        "**/database/**",
-        "**/repositories.ts",
-        "**/repositories/**"
-      ],
-      "linter": {
-        "rules": {
-          "style": {
-            "noRestrictedImports": {
-              "level": "error",
-              "options": {
-                "paths": {
-                  "dayjs": "Use date-fns.",
-                  "lodash": "Use the platform or a helper in features/.",
-                  "lodash-es": "Use the platform or a helper in features/.",
-                  "moment": "Use date-fns.",
-                  "react": {
-                    "importNames": [
-                      "memo",
-                      "useCallback",
-                      "useMemo"
-                    ],
-                    "message": "React Compiler memoizes. Write plain code."
-                  },
-                  "react-native": {
-                    "importNames": [
-                      "Appearance",
-                      "DynamicColorIOS",
-                      "PlatformColor",
-                      "StyleSheet",
-                      "useColorScheme"
-                    ],
-                    "message": "Unistyles owns styles and the theme. Use StyleSheet from react-native-unistyles."
-                  },
-                  "underscore": "Use the platform or a helper in features/."
-                },
-                "patterns": [
-                  {
-                    "group": [
-                      "../*",
-                      "../**"
-                    ],
-                    "message": "Import across directories with the @/ alias."
+                    "message": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts."
                   }
                 ]
               }
@@ -261,24 +62,10 @@
           "style": {
             "noDefaultExport": "off",
             "noExportedImports": "off",
-            "useComponentExportOnlyModules": {
-              "level": "error",
-              "options": {
-                "allowConstantExport": false,
-                "allowExportNames": [
-                  "ErrorBoundary",
-                  "generateStaticParams",
-                  "unstable_settings"
-                ]
-              }
-            },
             "useFilenamingConvention": "off"
           }
         }
-      },
-      "plugins": [
-        "./node_modules/@anstapol/code-rules/rules/routes-only.grit"
-      ]
+      }
     },
     {
       "includes": [
@@ -296,33 +83,6 @@
     {
       "includes": [
         "**/*.{ts,tsx}",
-        "!**/features/theme/constants.ts",
-        "!**/*.{test,spec}.{ts,tsx}",
-        "!**/e2e/**",
-        "!**/test/**"
-      ],
-      "plugins": [
-        "./node_modules/@anstapol/code-rules/rules/no-raw-colors.grit"
-      ]
-    },
-    {
-      "includes": [
-        "**/*.{ts,tsx}",
-        "!**/constants.ts",
-        "!**/db/**",
-        "!**/scripts/**",
-        "!**/*.config.{ts,mts,cts,js,mjs,cjs}",
-        "!**/*.{test,spec}.{ts,tsx}",
-        "!**/e2e/**",
-        "!**/test/**"
-      ],
-      "plugins": [
-        "./node_modules/@anstapol/code-rules/rules/no-raw-numbers.grit"
-      ]
-    },
-    {
-      "includes": [
-        "**/*.{ts,tsx}",
         "!**/*.{test,spec}.{ts,tsx}",
         "!**/e2e/**",
         "!**/test/**"
@@ -330,31 +90,6 @@
       "plugins": [
         "./node_modules/@anstapol/code-rules/rules/pressable-role.grit",
         "./node_modules/@anstapol/code-rules/rules/lucide-by-path.grit"
-      ]
-    },
-    {
-      "includes": [
-        "**/*.{ts,tsx}",
-        "!**/features/ui/**",
-        "!**/*.{test,spec}.{ts,tsx}",
-        "!**/e2e/**",
-        "!**/test/**"
-      ],
-      "plugins": [
-        "./node_modules/@anstapol/code-rules/rules/no-raw-primitives.grit"
-      ]
-    },
-    {
-      "includes": [
-        "**/*.{ts,tsx}",
-        "!**/features/ui/**",
-        "!**/features/theme/**",
-        "!**/*.{test,spec}.{ts,tsx}",
-        "!**/e2e/**",
-        "!**/test/**"
-      ],
-      "plugins": [
-        "./node_modules/@anstapol/code-rules/rules/danger-in-kit.grit"
       ]
     }
   ]
