@@ -1,8 +1,8 @@
 # Features pattern
 
-Every entry point (`typescript`, `next-monorepo`, `expo-app`) enforces this structure. The rules live in `typescript.json`, and the framework layers only add bans that their stack needs.
+Every entry point (`typescript`, `next-site`, `next-monorepo`, `expo-app`) enforces this structure. The rules live in `typescript.json`, and the framework layers only add bans that their stack needs.
 
-Code is grouped by domain. An app keeps each domain in `features/<domain>/`. A workspace package that shares domains keeps them in `packages/<name>/src/<domain>/`. A domain has only the files and folders it needs.
+Code is grouped by domain. An app keeps each domain in `features/<domain>/`, whether it is a single Next.js site at the repo root (`next-site`) or an app in a monorepo. A workspace package that shares domains keeps them in `packages/<name>/src/<domain>/`. A domain has only the files and folders it needs.
 
 ## Example
 
@@ -38,7 +38,7 @@ The paths below are the exact patterns the rules match. `features/**` matches a 
 | `tools.ts`, `tools/` | `**/features/**/tools.ts`, `**/features/**/tools/**` | Exported functions and variables must be named `*Tools`. No database client import. | `tools-only`, `noRestrictedImports` |
 | any other file | everything outside `tools.ts` and `tools/` | No `defineTool(...)` call: model tools are defined only in the domain's tools file. | `define-tool-in-tools` |
 | `constants.ts` | `**/constants.ts`, in any folder | Values only. No top-level function declaration and no variable holding an arrow or function expression. Top-level `const` names are `CONSTANT_CASE`. | `no-functions-in-constants`, `useNamingConvention` |
-| `helpers.ts`, `helpers/` | `**/features/**/helpers.ts`, `**/features/**/helpers/**`, `**/src/*/helpers.ts`, `**/src/*/helpers/**` | Pure functions. No `react` import and no database client. `next-monorepo` also bans `next/cache`, `next/headers` and `server-only`, and `expo-app` bans `react-native`. | `noRestrictedImports` |
+| `helpers.ts`, `helpers/` | `**/features/**/helpers.ts`, `**/features/**/helpers/**`, `**/src/*/helpers.ts`, `**/src/*/helpers/**` | Pure functions. No `react` import and no database client. `next-site` and `next-monorepo` also ban `next/cache`, `next/headers` and `server-only`, and `expo-app` bans `react-native`. | `noRestrictedImports` |
 | `components/` | `**/features/*/components/**`, `**/src/*/components/**` | Each file exports React components only: no exported constants, helpers or hooks. | `useComponentExportOnlyModules` |
 | `server.ts` | not restricted | Server code and writes. Imports the database client. In a shared package, `server.ts` and `index.ts` may re-export the domain's server and client-safe code. | |
 | `queries/`, `queries.ts` | not restricted | Reads. May import the database client. | |

@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.3.0
+
+### Entry points
+
+- New `next-site` entry point for a single Next.js app at the repo root, with `app/` and `features/` and no workspace packages. It has every Next.js and React rule of `next-monorepo`: `no-private-process-env`, Next imports banned in helpers, default exports in `app/`, email templates and MDX files, `noConsole` off in `prisma/`, Tailwind class sorting and the Tailwind CSS parser. It leaves out the workspace package barrels (`packages/*`, `tooling/*`) and the shared `next-config.ts`, which `no-private-process-env` also no longer skips there.
+- The features pattern is the same as in every other entry point.
+- The shared Next.js rules live in `src/next.json`. `next-monorepo` and `next-site` both build from it. `next-monorepo.json` has the same rules as in v0.2.0, with its overrides in a different order.
+
+### Rules
+
+- `next-site` and `next-monorepo` turn off `noBarrelFile` and `noReExportAll` in Next metadata image routes: `**/app/**/opengraph-image.tsx`, `**/app/**/twitter-image.tsx`, `**/app/**/icon.tsx` and `**/app/**/apple-icon.tsx`. A `twitter-image.tsx` that re-exports its `opengraph-image.tsx` now passes.
+
+This only relaxes rules, so code that passed v0.2.0 still passes.
+
 ## v0.2.0
 
 The config now matches one reference Next.js monorepo, which passes it with zero diagnostics, plus the features pattern in the shared base. Maximum strictness is replaced by a policy of tightening one rule or compiler flag per tag.

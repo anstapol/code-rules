@@ -1,6 +1,7 @@
 // Biome 2.5.15 ignores `extends` inside a config that is itself extended, so
 // each entry point is written out flat: src/typescript.json merged with the
-// type file.
+// type file. The Next entry points also merge src/next.json, the rules a
+// single site and a monorepo share, before their own file.
 // Run with --check to fail when the committed entry points are stale.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -34,9 +35,11 @@ function isPlainObject(value) {
 }
 
 const typescript = read('typescript');
+const next = merge(typescript, read('next'));
 const entries = {
   'expo-app': merge(typescript, read('expo-app')),
-  'next-monorepo': merge(typescript, read('next-monorepo')),
+  'next-monorepo': merge(next, read('next-monorepo')),
+  'next-site': merge(next, read('next-site')),
   typescript
 };
 

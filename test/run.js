@@ -17,7 +17,7 @@ import { join, relative } from 'node:path';
 const root = join(import.meta.dirname, '..');
 const cases = join(import.meta.dirname, 'cases');
 const PACKAGE = '@anstapol/code-rules';
-const ENTRY_FILES = ['expo-app', 'next-monorepo', 'typescript'];
+const ENTRY_FILES = ['expo-app', 'next-monorepo', 'next-site', 'typescript'];
 const TYPESCRIPT_RULES = [
   'define-tool-in-tools',
   'hooks-only',
@@ -30,6 +30,7 @@ const TYPESCRIPT_RULES = [
 const ENTRIES = {
   'expo-app': [...TYPESCRIPT_RULES, 'lucide-by-path', 'pressable-role'],
   'next-monorepo': [...TYPESCRIPT_RULES, 'no-private-process-env'],
+  'next-site': [...TYPESCRIPT_RULES, 'no-private-process-env'],
   typescript: TYPESCRIPT_RULES
 };
 let passed = 0;
@@ -151,6 +152,24 @@ function checkBase() {
   );
 }
 
+// next-site is next-monorepo without the workspace parts: the same Next rules,
+// no package barrels and no shared next-config.ts.
+function checkNextSite() {
+  const read = (name) => JSON.parse(readFileSync(join(root, `${name}.json`), 'utf8'));
+  const site = read('next-site');
+  const monorepo = read('next-monorepo');
+  const paths = site.overrides.flatMap((override) => override.includes);
+  const workspace = paths.filter((path) =>
+    /packages\/|tooling\/|apps\/|next-config\.ts/.test(path)
+  );
+  report(workspace.length === 0, 'next-site has no workspace paths', workspace.join(', '));
+  report(
+    JSON.stringify(site.linter) === JSON.stringify(monorepo.linter) &&
+      JSON.stringify(site.css) === JSON.stringify(monorepo.css),
+    'next-site and next-monorepo share their rules'
+  );
+}
+
 function checkEntryPoints(consumer) {
   for (const name of ENTRY_FILES) {
     try {
@@ -170,7 +189,7 @@ function checkEntryPoints(consumer) {
 
 function checkReactComponent(consumer) {
   const fixture = join(cases, 'react-component');
-  for (const entry of ['typescript', 'next-monorepo']) {
+  for (const entry of ['typescript', 'next-monorepo', 'next-site']) {
     useEntry(consumer, entry);
     const files = placeFixture(consumer, fixture);
     const check = biome(consumer, ['check', '--error-on-warnings', ...files]);
@@ -227,16 +246,32 @@ function checkPureHelpers(consumer) {
   }
 }
 
+// A Next metadata image route may re-export its sibling, as twitter-image.tsx
+// does with opengraph-image.tsx. Any other re-export in app/ is still a barrel.
+function checkMetadataImages(consumer) {
+  for (const name of ['next-monorepo', 'next-site']) {
+    useEntry(consumer, name);
+    for (const kind of ['fail', 'pass']) {
+      const { files, output, status } = lintCase(consumer, join(cases, 'metadata-images', kind));
+      const ok =
+        kind === 'fail' ? output.includes('noBarrelFile') : status === 0 && !output.includes('::');
+      report(ok, `${name} metadata-images ${kind} (${files.join(', ')})`, output);
+    }
+  }
+}
+
 const build = run('node', [join(root, 'scripts/build.js'), '--check'], root);
 must(build, 'Entry points are stale. pnpm build');
 
 checkBase();
+checkNextSite();
 const consumer = setUpConsumer();
 checkEntryPoints(consumer);
 checkReactComponent(consumer);
 checkFireAndForget(consumer);
 checkFeaturesPattern(consumer);
 checkPureHelpers(consumer);
+checkMetadataImages(consumer);
 
 function checkRule(consumer, entry, rule) {
   const expected = messages(rule);

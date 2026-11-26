@@ -459,23 +459,6 @@
     },
     {
       "includes": [
-        "**",
-        "!**/env.ts",
-        "!**/keys.ts",
-        "!**/*.config.{ts,mts,cts,js,mjs,cjs}",
-        "!**/next-config.ts",
-        "!**/prisma/**",
-        "!**/scripts/**",
-        "!**/*.{test,spec}.{ts,tsx}",
-        "!**/e2e/**",
-        "!**/test/**"
-      ],
-      "plugins": [
-        "./node_modules/@anstapol/code-rules/rules/no-private-process-env.grit"
-      ]
-    },
-    {
-      "includes": [
         "**/features/**/helpers.ts",
         "**/features/**/helpers/**",
         "**/src/*/helpers.ts",
@@ -532,10 +515,10 @@
     },
     {
       "includes": [
-        "packages/*/src/index.ts",
-        "packages/*/src/*/index.ts",
-        "packages/*/src/*/server.ts",
-        "tooling/*/index.ts"
+        "**/app/**/apple-icon.tsx",
+        "**/app/**/icon.tsx",
+        "**/app/**/opengraph-image.tsx",
+        "**/app/**/twitter-image.tsx"
       ],
       "linter": {
         "rules": {
@@ -554,6 +537,39 @@
         "rules": {
           "suspicious": {
             "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**",
+        "!**/env.ts",
+        "!**/keys.ts",
+        "!**/*.config.{ts,mts,cts,js,mjs,cjs}",
+        "!**/next-config.ts",
+        "!**/prisma/**",
+        "!**/scripts/**",
+        "!**/*.{test,spec}.{ts,tsx}",
+        "!**/e2e/**",
+        "!**/test/**"
+      ],
+      "plugins": [
+        "./node_modules/@anstapol/code-rules/rules/no-private-process-env.grit"
+      ]
+    },
+    {
+      "includes": [
+        "packages/*/src/index.ts",
+        "packages/*/src/*/index.ts",
+        "packages/*/src/*/server.ts",
+        "tooling/*/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off",
+            "noReExportAll": "off"
           }
         }
       }
