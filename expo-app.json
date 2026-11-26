@@ -27,12 +27,11 @@
     "bracketSameLine": false,
     "bracketSpacing": true,
     "enabled": true,
-    "expand": "auto",
     "formatWithErrors": false,
     "indentStyle": "space",
     "indentWidth": 2,
     "lineEnding": "lf",
-    "lineWidth": 80,
+    "lineWidth": 100,
     "trailingNewline": true,
     "useEditorconfig": false
   },
@@ -807,6 +806,25 @@
     },
     {
       "includes": [
+        "**/features/*/components/**",
+        "**/src/*/components/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useComponentExportOnlyModules": {
+              "level": "error",
+              "options": {
+                "allowConstantExport": false,
+                "allowExportNames": []
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
         "**/*.{ts,tsx}",
         "!**/*.{test,spec}.{ts,tsx}",
         "!**/e2e/**",
@@ -861,8 +879,8 @@
     },
     {
       "includes": [
-        "**/types.ts",
-        "**/types/**",
+        "**/features/**/types.ts",
+        "**/src/*/types.ts",
         "!**/*.{test,spec}.{ts,tsx}",
         "!**/e2e/**",
         "!**/test/**"
@@ -873,9 +891,11 @@
     },
     {
       "includes": [
-        "**/hooks.ts",
-        "**/hooks.tsx",
-        "**/hooks/**",
+        "**/features/**/hooks.ts",
+        "**/features/**/hooks.tsx",
+        "**/features/**/hooks/**",
+        "**/src/*/hooks.ts",
+        "**/src/*/hooks.tsx",
         "!**/*.{test,spec}.{ts,tsx}",
         "!**/e2e/**",
         "!**/test/**"
@@ -886,8 +906,9 @@
     },
     {
       "includes": [
-        "**/schemas.ts",
-        "**/schemas/**",
+        "**/features/**/schemas.ts",
+        "**/features/**/schemas/**",
+        "**/src/*/schemas.ts",
         "!**/*.{test,spec}.{ts,tsx}",
         "!**/e2e/**",
         "!**/test/**"
@@ -898,90 +919,11 @@
     },
     {
       "includes": [
-        "**/tools.ts",
-        "**/tools/**",
+        "**/features/**/tools.ts",
+        "**/features/**/tools/**",
         "!**/*.{test,spec}.{ts,tsx}",
         "!**/e2e/**",
         "!**/test/**"
-      ],
-      "plugins": [
-        "./node_modules/@anstapol/code-rules/rules/tools-only.grit"
-      ]
-    },
-    {
-      "includes": [
-        "**/*.{ts,tsx}",
-        "!**/tools.ts",
-        "!**/tools/**",
-        "!**/*.{test,spec}.{ts,tsx}",
-        "!**/e2e/**",
-        "!**/test/**"
-      ],
-      "plugins": [
-        "./node_modules/@anstapol/code-rules/rules/define-tool-in-tools.grit"
-      ]
-    },
-    {
-      "includes": [
-        "**/helpers.ts",
-        "**/helpers/**"
-      ],
-      "linter": {
-        "rules": {
-          "style": {
-            "noRestrictedImports": {
-              "level": "error",
-              "options": {
-                "paths": {
-                  "@prisma/client": "Only db/, database/ and repositories touch the database.",
-                  "dayjs": "Use date-fns.",
-                  "drizzle-orm": "Only db/, database/ and repositories touch the database.",
-                  "expo-sqlite": "Only db/, database/ and repositories touch the database.",
-                  "lodash": "Use the platform or a helper in features/.",
-                  "lodash-es": "Use the platform or a helper in features/.",
-                  "moment": "Use date-fns.",
-                  "react": "Helpers stay pure. React belongs in hooks and components.",
-                  "underscore": "Use the platform or a helper in features/."
-                },
-                "patterns": [
-                  {
-                    "group": [
-                      "../*",
-                      "../**"
-                    ],
-                    "message": "Import across directories with the @/ alias."
-                  },
-                  {
-                    "group": [
-                      "@prisma/client/*",
-                      "drizzle-orm/*",
-                      "expo-sqlite/*",
-                      "@*/database/client"
-                    ],
-                    "message": "Only db/, database/ and repositories touch the database."
-                  },
-                  {
-                    "group": [
-                      "@/db",
-                      "@/db/*",
-                      "**/repositories",
-                      "**/repositories/*"
-                    ],
-                    "message": "Helpers stay pure. Do I/O in repositories, queries, actions or hooks."
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "**/db/**",
-        "**/database/**",
-        "**/repositories.ts",
-        "**/repositories/**"
       ],
       "linter": {
         "rules": {
@@ -1007,10 +949,60 @@
                 "patterns": [
                   {
                     "group": [
-                      "../*",
-                      "../**"
+                      "@*/database/client"
                     ],
-                    "message": "Import across directories with the @/ alias."
+                    "message": "Tools adapt the feature for the model. Read in queries, write in server.ts."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "plugins": [
+        "./node_modules/@anstapol/code-rules/rules/tools-only.grit"
+      ]
+    },
+    {
+      "includes": [
+        "**/*.{ts,tsx}",
+        "!**/features/**/tools.ts",
+        "!**/features/**/tools/**",
+        "!**/*.{test,spec}.{ts,tsx}",
+        "!**/e2e/**",
+        "!**/test/**"
+      ],
+      "plugins": [
+        "./node_modules/@anstapol/code-rules/rules/define-tool-in-tools.grit"
+      ]
+    },
+    {
+      "includes": [
+        "**/features/**/helpers.ts",
+        "**/features/**/helpers/**",
+        "**/src/*/helpers.ts",
+        "**/src/*/helpers/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "dayjs": "Use date-fns.",
+                  "lodash": "Use the platform or a helper in features/.",
+                  "lodash-es": "Use the platform or a helper in features/.",
+                  "moment": "Use date-fns.",
+                  "react": "Helpers stay pure. React belongs in hooks and components.",
+                  "underscore": "Use the platform or a helper in features/."
+                },
+                "patterns": [
+                  {
+                    "group": [
+                      "@*/database/client"
+                    ],
+                    "message": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts."
                   }
                 ]
               }
@@ -1054,7 +1046,9 @@
             "noNodejsModules": "off"
           },
           "style": {
-            "noDefaultExport": "off"
+            "noDefaultExport": "off",
+            "noMagicNumbers": "off",
+            "noProcessEnv": "off"
           }
         }
       }
@@ -1095,7 +1089,9 @@
             "useTopLevelRegex": "off"
           },
           "style": {
-            "noMagicNumbers": "off"
+            "noDefaultExport": "off",
+            "noMagicNumbers": "off",
+            "noProcessEnv": "off"
           }
         }
       }
@@ -1154,6 +1150,72 @@
                       "expo-*"
                     ],
                     "message": "Helpers stay pure. Expo modules belong in hooks and components."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/features/**/tools.ts",
+        "**/features/**/tools/**",
+        "!**/*.{test,spec}.{ts,tsx}",
+        "!**/e2e/**",
+        "!**/test/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "@prisma/client": "Only db/, database/ and repositories touch the database.",
+                  "dayjs": "Use date-fns.",
+                  "drizzle-orm": "Only db/, database/ and repositories touch the database.",
+                  "expo-sqlite": "Only db/, database/ and repositories touch the database.",
+                  "lodash": "Use the platform or a helper in features/.",
+                  "lodash-es": "Use the platform or a helper in features/.",
+                  "moment": "Use date-fns.",
+                  "react": {
+                    "importNames": [
+                      "memo",
+                      "useCallback",
+                      "useMemo"
+                    ],
+                    "message": "React Compiler memoizes. Write plain code."
+                  },
+                  "react-native": {
+                    "importNames": [
+                      "Appearance",
+                      "DynamicColorIOS",
+                      "PlatformColor",
+                      "StyleSheet",
+                      "useColorScheme"
+                    ],
+                    "message": "Unistyles owns styles and the theme. Use StyleSheet from react-native-unistyles."
+                  },
+                  "underscore": "Use the platform or a helper in features/."
+                },
+                "patterns": [
+                  {
+                    "group": [
+                      "../*",
+                      "../**"
+                    ],
+                    "message": "Import across directories with the @/ alias."
+                  },
+                  {
+                    "group": [
+                      "@prisma/client/*",
+                      "drizzle-orm/*",
+                      "expo-sqlite/*",
+                      "@*/database/client"
+                    ],
+                    "message": "Only db/, database/ and repositories touch the database."
                   }
                 ]
               }

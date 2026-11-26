@@ -56,6 +56,13 @@
               }
             ]
           }
+        },
+        "useComponentExportOnlyModules": {
+          "level": "error",
+          "options": {
+            "allowConstantExport": false,
+            "allowExportNames": []
+          }
         }
       }
     }
@@ -115,6 +122,72 @@
                       "expo-*"
                     ],
                     "message": "Helpers stay pure. Expo modules belong in hooks and components."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/features/**/tools.ts",
+        "**/features/**/tools/**",
+        "!**/*.{test,spec}.{ts,tsx}",
+        "!**/e2e/**",
+        "!**/test/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "@prisma/client": "Only db/, database/ and repositories touch the database.",
+                  "dayjs": "Use date-fns.",
+                  "drizzle-orm": "Only db/, database/ and repositories touch the database.",
+                  "expo-sqlite": "Only db/, database/ and repositories touch the database.",
+                  "lodash": "Use the platform or a helper in features/.",
+                  "lodash-es": "Use the platform or a helper in features/.",
+                  "moment": "Use date-fns.",
+                  "react": {
+                    "importNames": [
+                      "memo",
+                      "useCallback",
+                      "useMemo"
+                    ],
+                    "message": "React Compiler memoizes. Write plain code."
+                  },
+                  "react-native": {
+                    "importNames": [
+                      "Appearance",
+                      "DynamicColorIOS",
+                      "PlatformColor",
+                      "StyleSheet",
+                      "useColorScheme"
+                    ],
+                    "message": "Unistyles owns styles and the theme. Use StyleSheet from react-native-unistyles."
+                  },
+                  "underscore": "Use the platform or a helper in features/."
+                },
+                "patterns": [
+                  {
+                    "group": [
+                      "../*",
+                      "../**"
+                    ],
+                    "message": "Import across directories with the @/ alias."
+                  },
+                  {
+                    "group": [
+                      "@prisma/client/*",
+                      "drizzle-orm/*",
+                      "expo-sqlite/*",
+                      "@*/database/client"
+                    ],
+                    "message": "Only db/, database/ and repositories touch the database."
                   }
                 ]
               }

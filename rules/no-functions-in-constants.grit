@@ -7,6 +7,9 @@ or {
     JsFunctionExpression()
   }))
 } as $fn where {
-  $fn <: not within or { JsFunctionBody(), JsArrowFunctionExpression() },
+  $fn <: not within or {
+    JsFunctionBody(),
+    JsArrowFunctionExpression()
+  } ,
   register_diagnostic(span=$fn, message="constants.ts holds values only. Move functions to helpers.ts.")
 }
