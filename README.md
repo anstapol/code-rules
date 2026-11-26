@@ -12,7 +12,6 @@ It needs Biome 2.5.15 exactly. Biome is a peer dependency, so the project instal
 | `@anstapol/code-rules/next-monorepo` | `next-monorepo.json` | `typescript` plus Next.js and Turborepo: Next.js domain rules, `process.env` access, route files, server actions, Tailwind class sorting. |
 | `@anstapol/code-rules/expo-app` | `expo-app.json` | `typescript` plus Expo and React Native: route files, theme colours and numbers, the kit in `features/ui`, `Pressable` roles, lucide imports, Unistyles. |
 | `@anstapol/code-rules/tsconfig/strict.json` | `tsconfig/strict.json` | Strict TypeScript compiler options. |
-| `@anstapol/code-rules/base` | `base.json` | Deprecated. A copy of `typescript.json` kept for projects that still extend `base`. Switch to `typescript`; `base` will be removed. |
 
 A project extends one Biome entry point. `next-monorepo` and `expo-app` already contain all of `typescript`.
 
@@ -130,7 +129,7 @@ The grit rules are referenced as `./node_modules/@anstapol/code-rules/rules/<rul
 
 ### Moving from `@anstapol/biome-config`
 
-Replace the dependency with `@anstapol/code-rules` and change `extends` from `@anstapol/biome-config/base` to `@anstapol/code-rules/typescript`. Suppression comments keep working: grit rules are still reported as `lint/plugin`.
+Replace the dependency with `@anstapol/code-rules` and change `extends` from `@anstapol/biome-config/base` to `@anstapol/code-rules/typescript`. The `base` entry point no longer exists. Suppression comments keep working: grit rules are still reported as `lint/plugin`.
 
 ## Local overrides
 
@@ -164,9 +163,9 @@ A shared grit rule cannot be switched off for a path in config. Suppress it in t
 
 ## How the entry points are built
 
-Biome 2.5.15 ignores `extends` inside a config that is itself extended, so `next-monorepo.json` cannot extend `typescript.json`. The sources live in `src/`, and `pnpm build` writes each entry point out flat at the repo root: `src/typescript.json` merged with the type file, plus `base.json` as a copy of `typescript.json`. The merge follows Biome's own: `overrides` and `plugins` add up, a rule set in the type file replaces the shared rule, other objects merge.
+Biome 2.5.15 ignores `extends` inside a config that is itself extended, so `next-monorepo.json` cannot extend `typescript.json`. The sources live in `src/`, and `pnpm build` writes each entry point out flat at the repo root: `src/typescript.json` merged with the type file. The merge follows Biome's own: `overrides` and `plugins` add up, a rule set in the type file replaces the shared rule, other objects merge.
 
-Never edit the root `typescript.json`, `base.json`, `next-monorepo.json` or `expo-app.json` by hand. `pnpm test` fails when they are stale.
+Never edit the root `typescript.json`, `next-monorepo.json` or `expo-app.json` by hand. `pnpm test` fails when they are stale.
 
 ## Add or change a rule
 
@@ -189,7 +188,7 @@ pnpm test
 
 The test installs this package from its local path into a temporary project and checks that:
 
-- every built entry point parses and loads in Biome, and `base.json` equals `typescript.json`;
+- every built entry point parses and loads in Biome;
 - `typescript.json` lists every stable rule, and every rule it turns off has a row in this README;
 - an ordinary React component (`className`, a text child, a hook) passes `biome check` under `typescript` and `next-monorepo`, and `biome check --write --unsafe` leaves it unchanged;
 - each fail fixture reports its rule and each pass fixture lints clean under every entry point that ships the rule.

@@ -6,7 +6,6 @@
   "license": "UNLICENSED",
   "type": "module",
   "exports": {
-    "./base": "./base.json",
     "./expo-app": "./expo-app.json",
     "./next-monorepo": "./next-monorepo.json",
     "./rules/*": "./rules/*",
@@ -14,7 +13,6 @@
     "./typescript": "./typescript.json"
   },
   "files": [
-    "base.json",
     "expo-app.json",
     "next-monorepo.json",
     "rules",

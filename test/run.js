@@ -13,12 +13,11 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
-import { isDeepStrictEqual } from 'node:util';
 
 const root = join(import.meta.dirname, '..');
 const cases = join(import.meta.dirname, 'cases');
 const PACKAGE = '@anstapol/code-rules';
-const ENTRY_FILES = ['base', 'expo-app', 'next-monorepo', 'typescript'];
+const ENTRY_FILES = ['expo-app', 'next-monorepo', 'typescript'];
 const STABLE_GROUPS = [
   'a11y',
   'complexity',
@@ -191,19 +190,14 @@ function checkRuleCoverage() {
 }
 
 function checkEntryPoints(consumer) {
-  const parsed = {};
   for (const name of ENTRY_FILES) {
     try {
-      parsed[name] = JSON.parse(readFileSync(join(root, `${name}.json`), 'utf8'));
+      JSON.parse(readFileSync(join(root, `${name}.json`), 'utf8'));
       report(true, `${name}.json parses`);
     } catch (error) {
       report(false, `${name}.json parses`, String(error));
     }
   }
-  report(
-    isDeepStrictEqual(parsed.base, parsed.typescript),
-    'base.json equals typescript.json'
-  );
   for (const name of ENTRY_FILES) {
     useEntry(consumer, name);
     placeFixture(consumer, join(cases, 'types-only', 'pass'));
