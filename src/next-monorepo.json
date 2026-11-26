@@ -1,0 +1,140 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "useSortedKeys": "on"
+      }
+    }
+  },
+  "linter": {
+    "rules": {
+      "nursery": {
+        "useSortedClasses": {
+          "fix": "safe",
+          "level": "error"
+        }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/src/*/components/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useComponentExportOnlyModules": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**",
+        "!**/env.ts",
+        "!**/keys.ts",
+        "!**/*.config.{ts,mts,js,mjs}",
+        "!**/next-config.ts",
+        "!**/*.{test,spec}.{ts,tsx}",
+        "!**/e2e/**",
+        "!**/prisma/**"
+      ],
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/no-private-process-env.grit"]
+    },
+    {
+      "includes": ["**/src/*/types.ts"],
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/types-only.grit"]
+    },
+    {
+      "includes": ["**/src/*/hooks.ts", "**/src/*/hooks.tsx"],
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/hooks-only.grit"]
+    },
+    {
+      "includes": ["**/src/*/schemas.ts"],
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/schemas-only.grit"]
+    },
+    {
+      "includes": [
+        "**/features/**/helpers.ts",
+        "**/features/**/helpers/**",
+        "**/src/*/helpers.ts",
+        "**/src/*/helpers/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "next/cache": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
+                  "next/headers": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
+                  "react": "Helpers stay pure. React belongs in hooks and components.",
+                  "server-only": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/features/**/tools.ts", "**/features/**/tools/**"],
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/tools-only.grit"]
+    },
+    {
+      "includes": [
+        "**/*.ts",
+        "**/*.tsx",
+        "!**/features/**/tools.ts",
+        "!**/features/**/tools/**",
+        "!**/*.test.ts",
+        "!**/*.test.tsx"
+      ],
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/define-tool-in-tools.grit"]
+    },
+    {
+      "includes": ["**/app/**", "**/mdx-components.tsx", "**/mdx-layout.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off",
+            "noExportedImports": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/*/src/index.ts", "packages/*/src/*/index.ts"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off",
+            "noReExportAll": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/prisma/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/next-config.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off",
+            "noMagicNumbers": "off"
+          }
+        }
+      }
+    }
+  ]
+}

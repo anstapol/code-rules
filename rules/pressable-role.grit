@@ -1,0 +1,10 @@
+language js
+
+or {
+  JsxOpeningElement(),
+  JsxSelfClosingElement()
+} as $pressable where {
+  $pressable <: r"<Pressable\b[\s\S]*",
+  $pressable <: not r"[\s\S]*\baccessibilityRole\b[\s\S]*",
+  register_diagnostic(span=$pressable, message="A Pressable needs an accessibilityRole, so screen readers say what tapping it does.")
+}

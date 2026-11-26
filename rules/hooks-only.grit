@@ -1,0 +1,11 @@
+language js
+
+or {
+  JsFunctionDeclaration(id=$name),
+  JsVariableDeclarator(id=$name)
+} as $decl where {
+  $decl <: within JsExport(),
+  $decl <: not within or { JsFunctionBody(), JsArrowFunctionExpression() },
+  $name <: not r"use[A-Z].*",
+  register_diagnostic(span=$name, message="hooks export hooks only (use*). Move the rest to helpers.ts or constants.ts.")
+}

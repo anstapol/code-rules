@@ -1,0 +1,6 @@
+language js
+
+JsxAttribute() as $attr where {
+  $attr <: r"style=\{\s*\{[\s\S]*",
+  register_diagnostic(span=$attr, message="No inline style objects. Define styles once with the app's stylesheet and pass a reference.")
+}

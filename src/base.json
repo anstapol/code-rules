@@ -1,0 +1,324 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on",
+        "useSortedAttributes": "on"
+      }
+    },
+    "enabled": true
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "attributePosition": "multiline",
+      "bracketSpacing": true,
+      "jsxQuoteStyle": "double",
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "none"
+    }
+  },
+  "json": {
+    "formatter": {
+      "trailingCommas": "none"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "complexity": {
+        "noBannedTypes": "error",
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": {
+            "maxAllowedComplexity": 15
+          }
+        },
+        "noExcessiveLinesPerFunction": {
+          "level": "error",
+          "options": {
+            "maxLines": 60
+          }
+        },
+        "noImplicitCoercions": "error",
+        "noUselessCatchBinding": "error",
+        "noUselessFragments": "error",
+        "noUselessReturn": "error",
+        "noUselessUndefined": "error",
+        "useMaxParams": "error",
+        "useSimplifiedLogicExpression": "error"
+      },
+      "correctness": {
+        "noInvalidUseBeforeDeclaration": "error",
+        "noNestedComponentDefinitions": "error",
+        "noReactPropAssignments": "error",
+        "noUndeclaredDependencies": "error",
+        "noUnreachable": "error",
+        "noUnusedFunctionParameters": "error",
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "useExhaustiveDependencies": "error",
+        "useHookAtTopLevel": "error",
+        "useJsxKeyInIterable": "error"
+      },
+      "nursery": {
+        "noFloatingPromises": "error",
+        "noMisusedPromises": "error",
+        "useExhaustiveSwitchCases": "error"
+      },
+      "performance": {
+        "noBarrelFile": "error",
+        "noNamespaceImport": "error",
+        "noReExportAll": "error",
+        "useTopLevelRegex": "error"
+      },
+      "preset": "recommended",
+      "security": {
+        "noDangerouslySetInnerHtml": "error"
+      },
+      "style": {
+        "noDefaultExport": "error",
+        "noExportedImports": "error",
+        "noIncrementDecrement": "error",
+        "noMagicNumbers": "error",
+        "noNestedTernary": "error",
+        "noNonNullAssertion": "error",
+        "noParameterAssign": "error",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "react": {
+                "importNames": ["memo", "useCallback", "useMemo"],
+                "message": "React Compiler memoizes. Write plain code."
+              }
+            }
+          }
+        },
+        "useAtIndex": "error",
+        "useBlockStatements": "error",
+        "useConsistentArrayType": "error",
+        "useConsistentArrowReturn": "error",
+        "useConsistentObjectDefinitions": "error",
+        "useConsistentTypeDefinitions": {
+          "level": "error",
+          "options": {
+            "style": "type"
+          }
+        },
+        "useDestructuring": "error",
+        "useErrorCause": "error",
+        "useExportType": "error",
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": {
+            "filenameCases": ["kebab-case"],
+            "requireAscii": true,
+            "strictCase": true
+          }
+        },
+        "useImportType": "error",
+        "useNamingConvention": {
+          "level": "error",
+          "options": {
+            "conventions": [
+              {
+                "match": ".*",
+                "selector": {
+                  "kind": "typeMember"
+                }
+              },
+              {
+                "match": ".*",
+                "selector": {
+                  "kind": "objectLiteralMember"
+                }
+              }
+            ],
+            "strictCase": true
+          }
+        },
+        "useObjectSpread": "error",
+        "useReactFunctionComponents": "error",
+        "useUnifiedTypeSignatures": "error"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "error",
+        "noAssignInExpressions": "error",
+        "noBitwiseOperators": "error",
+        "noConsole": {
+          "level": "error",
+          "options": {
+            "allow": ["error", "warn"]
+          }
+        },
+        "noDeprecatedImports": "error",
+        "noDuplicatedSpreadProps": "error",
+        "noDuplicateTestHooks": "error",
+        "noEqualsToNull": "error",
+        "noEvolvingTypes": "error",
+        "noExplicitAny": "error",
+        "noExportsInTest": "error",
+        "noFocusedTests": "error",
+        "noImplicitAnyLet": "error",
+        "noImportCycles": "error",
+        "noLeakedRender": "error",
+        "noMisplacedAssertion": "error",
+        "noParametersOnlyUsedInRecursion": "error",
+        "noRedeclare": "error",
+        "noReturnAssign": "error",
+        "noShadow": "error",
+        "noShadowRestrictedNames": "error",
+        "noSkippedTests": "error",
+        "noTsIgnore": "error",
+        "noUnnecessaryConditions": "error",
+        "useArraySortCompare": "error",
+        "useAwait": "error",
+        "useGuardForIn": "error",
+        "useIterableCallbackReturn": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.tsx"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveLinesPerFunction": {
+              "level": "error",
+              "options": {
+                "maxLines": 120
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/features/*/components/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useComponentExportOnlyModules": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/constants.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": {
+              "level": "error",
+              "options": {
+                "conventions": [
+                  {
+                    "formats": ["CONSTANT_CASE"],
+                    "selector": {
+                      "kind": "const",
+                      "scope": "global"
+                    }
+                  },
+                  {
+                    "match": ".*",
+                    "selector": {
+                      "kind": "any"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/no-functions-in-constants.grit"]
+    },
+    {
+      "includes": ["**/features/**/types.ts"],
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/types-only.grit"]
+    },
+    {
+      "includes": [
+        "**/features/**/hooks.ts",
+        "**/features/**/hooks.tsx",
+        "**/features/**/hooks/**",
+        "!**/*.test.*"
+      ],
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/hooks-only.grit"]
+    },
+    {
+      "includes": ["**/features/**/schemas.ts", "**/features/**/schemas/**"],
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/schemas-only.grit"]
+    },
+    {
+      "includes": ["**/features/**/helpers.ts", "**/features/**/helpers/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "react": "Helpers stay pure. React belongs in hooks and components."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/*.ts",
+        "**/*.tsx",
+        "!**/*.{test,spec}.{ts,tsx}",
+        "!**/e2e/**",
+        "!**/test/**"
+      ],
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/no-type-escapes.grit"]
+    },
+    {
+      "includes": ["**/*.config.{ts,mts,js,mjs}"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off",
+            "noMagicNumbers": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.{test,spec}.{ts,tsx}", "**/e2e/**", "**/test/**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveLinesPerFunction": "off"
+          },
+          "performance": {
+            "useTopLevelRegex": "off"
+          },
+          "style": {
+            "noDefaultExport": "off",
+            "noMagicNumbers": "off"
+          }
+        }
+      }
+    }
+  ],
+  "vcs": {
+    "clientKind": "git",
+    "enabled": true,
+    "useIgnoreFile": true
+  }
+}

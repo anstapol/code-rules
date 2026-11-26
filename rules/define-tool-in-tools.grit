@@ -1,0 +1,5 @@
+language js
+
+`defineTool($definition)` as $call where {
+  register_diagnostic(span=$call, message="Tools live in the feature's tools.ts, so the model reaches each domain through one file.")
+}

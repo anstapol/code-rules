@@ -1,0 +1,11 @@
+language js
+
+or {
+  JsFunctionDeclaration(id=$name),
+  JsVariableDeclarator(id=$name)
+} as $decl where {
+  $decl <: within JsExport(),
+  $decl <: not within or { JsFunctionBody(), JsArrowFunctionExpression() },
+  $name <: not r".*Schema",
+  register_diagnostic(span=$name, message="schemas.ts exports *Schema only. Move constants to constants.ts, functions to helpers.ts.")
+}

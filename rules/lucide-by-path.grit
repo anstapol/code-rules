@@ -1,0 +1,8 @@
+language js
+
+// Each icon imported from its own path, so Metro bundles only the icons in
+// use. Type imports from the package root are fine.
+JsImport() as $import where {
+  $import <: r"import\s+\{[\s\S]*from\s+['\"]lucide-react-native['\"];?",
+  register_diagnostic(span=$import, message="Import each icon from 'lucide-react-native/icons/<name>'. Only `import type` may use the package root.")
+}

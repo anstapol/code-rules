@@ -1,0 +1,10 @@
+language js
+
+// Replaces Biome's noProcessEnv, which has no allowlist. Next inlines
+// NEXT_PUBLIC_* (validated by each app's env.ts at build) and NEXT_RUNTIME,
+// so client code can read those without shipping zod via keys().
+
+`process.env` as $env where {
+  $env <: not within `process.env.$name` where { $name <: or { r"NEXT_PUBLIC_\w+", `NEXT_RUNTIME` } },
+  register_diagnostic(span=$env, message="Read env through keys() or env.ts. Only process.env.NEXT_PUBLIC_* and NEXT_RUNTIME may be read directly.")
+}

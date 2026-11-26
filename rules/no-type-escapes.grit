@@ -1,0 +1,8 @@
+language js
+
+or {
+  `$value as never`,
+  `$value as unknown`
+} as $cast where {
+  register_diagnostic(span=$cast, message="No `as never` or `as unknown` outside tests: they switch the type checker off. Fix the type: narrow it, widen the prop, or type the helper.")
+}

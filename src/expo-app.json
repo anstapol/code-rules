@@ -1,0 +1,180 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "linter": {
+    "rules": {
+      "a11y": {
+        "noStaticElementInteractions": "off",
+        "noSvgWithoutTitle": "off",
+        "useAriaPropsForRole": "off",
+        "useAriaPropsSupportedByRole": "off",
+        "useHtmlLang": "off",
+        "useKeyWithClickEvents": "off",
+        "useMediaCaption": "off",
+        "useSemanticElements": "off",
+        "useValidAnchor": "off"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": {
+            "maxAllowedComplexity": 10
+          }
+        },
+        "useLiteralKeys": "off"
+      },
+      "nursery": {
+        "noReactNativeRawText": "error"
+      },
+      "style": {
+        "noEnum": "error",
+        "noProcessEnv": "error",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "react": {
+                "importNames": ["memo", "useCallback", "useMemo"],
+                "message": "React Compiler memoizes. Write plain code."
+              }
+            },
+            "patterns": [
+              {
+                "group": ["../*", "../**"],
+                "message": "Import across directories with the @/ alias."
+              }
+            ]
+          }
+        }
+      },
+      "suspicious": {
+        "noConsole": "error"
+      }
+    }
+  },
+  "plugins": ["./node_modules/@anstapol/biome-config/rules/no-inline-styles.grit"],
+  "overrides": [
+    {
+      "includes": ["**/features/*/components/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": {
+              "level": "error",
+              "options": {
+                "filenameCases": ["PascalCase"],
+                "requireAscii": true,
+                "strictCase": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["app/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off",
+            "noExportedImports": "off",
+            "useFilenamingConvention": "off"
+          }
+        }
+      },
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/routes-only.grit"]
+    },
+    {
+      "includes": ["**/features/**/helpers.ts", "**/features/**/helpers/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "react": "Helpers stay pure. React belongs in hooks and components.",
+                  "react-native": "Helpers stay pure. React Native belongs in hooks and components."
+                },
+                "patterns": [
+                  {
+                    "group": ["../*", "../**"],
+                    "message": "Import across directories with the @/ alias."
+                  },
+                  {
+                    "group": ["expo-*"],
+                    "message": "Helpers stay pure. Expo modules belong in hooks and components."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/*.ts",
+        "**/*.tsx",
+        "!**/features/theme/constants.ts",
+        "!**/*.test.ts",
+        "!**/*.test.tsx"
+      ],
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/no-raw-colors.grit"]
+    },
+    {
+      "includes": [
+        "**/*.ts",
+        "**/*.tsx",
+        "!**/constants.ts",
+        "!db/**",
+        "!scripts/**",
+        "!tooling/**",
+        "!**/*.config.ts",
+        "!**/*.test.ts",
+        "!**/*.test.tsx"
+      ],
+      "plugins": ["./node_modules/@anstapol/biome-config/rules/no-raw-numbers.grit"]
+    },
+    {
+      "includes": ["**/*.ts", "**/*.tsx", "!test/**", "!**/*.test.ts", "!**/*.test.tsx"],
+      "plugins": [
+        "./node_modules/@anstapol/biome-config/rules/pressable-role.grit",
+        "./node_modules/@anstapol/biome-config/rules/lucide-by-path.grit"
+      ]
+    },
+    {
+      "includes": ["**/features/*/env.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noProcessEnv": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["scripts/**", "tooling/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noMagicNumbers": "off",
+            "noProcessEnv": "off"
+          },
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.config.{ts,mts,js,mjs}"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noProcessEnv": "off"
+          }
+        }
+      }
+    }
+  ]
+}

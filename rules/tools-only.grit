@@ -1,0 +1,11 @@
+language js
+
+or {
+  JsFunctionDeclaration(id=$name),
+  JsVariableDeclarator(id=$name)
+} as $decl where {
+  $decl <: within JsExport(),
+  $decl <: not within or { JsFunctionBody(), JsArrowFunctionExpression() },
+  $name <: not r".*Tools",
+  register_diagnostic(span=$name, message="tools.ts exports its *Tools list only. Register each tool there, keep the rest in queries or server.ts.")
+}

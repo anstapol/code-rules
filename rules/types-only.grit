@@ -1,0 +1,10 @@
+language js
+
+or {
+  JsFunctionDeclaration(),
+  JsClassDeclaration(),
+  JsVariableDeclarator()
+} as $decl where {
+  $decl <: not within or { JsFunctionBody(), JsArrowFunctionExpression() },
+  register_diagnostic(span=$decl, message="types.ts holds types only. Move values to constants.ts or helpers.ts.")
+}
