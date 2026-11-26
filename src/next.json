@@ -1,0 +1,88 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "linter": {
+    "rules": {
+      "nursery": {
+        "useSortedClasses": {
+          "fix": "safe",
+          "level": "error"
+        }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "**/features/**/helpers.ts",
+        "**/features/**/helpers/**",
+        "**/src/*/helpers.ts",
+        "**/src/*/helpers/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "@prisma/client": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
+                  "drizzle-orm": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
+                  "expo-sqlite": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
+                  "next/cache": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
+                  "next/headers": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts.",
+                  "react": "Helpers stay pure. React belongs in hooks and components.",
+                  "server-only": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts."
+                },
+                "patterns": [
+                  {
+                    "group": [
+                      "@*/database/client",
+                      "@prisma/client/*",
+                      "drizzle-orm/*",
+                      "expo-sqlite/*"
+                    ],
+                    "message": "Helpers stay pure. Do I/O in queries, mutations, actions or server.ts."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/app/**",
+        "**/email/templates/**",
+        "**/emails/**",
+        "**/mdx-components.tsx",
+        "**/mdx-layout.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off",
+            "noExportedImports": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/prisma/**"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    }
+  ]
+}

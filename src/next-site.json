@@ -1,0 +1,21 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "overrides": [
+    {
+      "includes": [
+        "**",
+        "!**/env.ts",
+        "!**/keys.ts",
+        "!**/*.config.{ts,mts,cts,js,mjs,cjs}",
+        "!**/prisma/**",
+        "!**/scripts/**",
+        "!**/*.{test,spec}.{ts,tsx}",
+        "!**/e2e/**",
+        "!**/test/**"
+      ],
+      "plugins": [
+        "./node_modules/@anstapol/code-rules/rules/no-private-process-env.grit"
+      ]
+    }
+  ]
+}

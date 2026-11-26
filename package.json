@@ -2,12 +2,13 @@
   "name": "@anstapol/code-rules",
   "version": "0.2.0",
   "private": true,
-  "description": "Strict shared Biome and TypeScript config, with grit rules, for TypeScript, Next.js monorepo and Expo projects.",
+  "description": "Strict shared Biome and TypeScript config, with grit rules, for TypeScript, Next.js site, Next.js monorepo and Expo projects.",
   "license": "UNLICENSED",
   "type": "module",
   "exports": {
     "./expo-app": "./expo-app.json",
     "./next-monorepo": "./next-monorepo.json",
+    "./next-site": "./next-site.json",
     "./rules/*": "./rules/*",
     "./tsconfig/strict.json": "./tsconfig/strict.json",
     "./typescript": "./typescript.json"
@@ -15,6 +16,7 @@
   "files": [
     "expo-app.json",
     "next-monorepo.json",
+    "next-site.json",
     "docs",
     "rules",
     "tsconfig",
