@@ -1,4 +1,4 @@
-// Biome 2.5.15 ignores `extends` inside a config that is itself extended, so
+// Biome 2.6.8 ignores `extends` inside a config that is itself extended, so
 // each entry point is written out flat: src/typescript.json merged with the
 // type file. The Next entry points also merge src/next.json, the rules a
 // single site and a monorepo share, before their own file.

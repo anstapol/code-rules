@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.4.0
+
+Needs Biome 2.6.8 exactly. Biome 2.6 rejects the v0.3.0 config, so a project on Biome 2.6 must use this tag, and a project on Biome 2.5.15 must stay on v0.3.0.
+
+### Rules
+
+- `useSortedClasses` is now `useTailwindSortedClasses`, its Biome 2.6 name. `next-site` and `next-monorepo` keep it at `error` with the safe fix.
+- Biome 2.6 moved `noReactNativeRawText` from `nursery` to `correctness` and made it recommended, so it fired on plain web JSX. The base turns it off, and `expo-app` turns it on at `error` as before.
+
 ## v0.3.0
 
 ### Entry points

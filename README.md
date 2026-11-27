@@ -4,7 +4,7 @@ Shared lint, format and compiler config for my TypeScript projects. It ships Bio
 
 Every entry point enforces the same project structure, the [features pattern](docs/features-pattern.md). Beyond it, the rules are those of one reference Next.js monorepo that passes them with zero diagnostics.
 
-It needs Biome 2.5.15 exactly. Biome is a peer dependency, so the project installs it.
+It needs Biome 2.6.8 exactly. Biome is a peer dependency, so the project installs it.
 
 ## Entry points
 
@@ -31,8 +31,8 @@ A project extends one Biome entry point. `next-site`, `next-monorepo` and `expo-
 `typescript` turns these on at `error`:
 
 - `complexity`: `noExcessiveCognitiveComplexity` (15), `noExcessiveLinesPerFunction` (60, 120 in `.tsx`), `noImplicitCoercions`, `noUselessCatchBinding`, `noUselessFragments`, `noUselessReturn`, `noUselessUndefined`, `useMaxParams`, `useSimplifiedLogicExpression`.
-- `correctness`: `noNestedComponentDefinitions`, `noReactPropAssignments`, `noUndeclaredDependencies`, `noUnusedFunctionParameters`, `noUnusedImports`, `noUnusedVariables`.
-- `nursery`: `noFloatingPromises`, `noMisusedPromises`, `useExhaustiveSwitchCases`. `next-site` and `next-monorepo` add `useSortedClasses`, and `expo-app` adds `noReactNativeRawText`.
+- `correctness`: `noNestedComponentDefinitions`, `noReactPropAssignments`, `noUndeclaredDependencies`, `noUnusedFunctionParameters`, `noUnusedImports`, `noUnusedVariables`. `noReactNativeRawText` is off, and `expo-app` turns it on.
+- `nursery`: `noFloatingPromises`, `noMisusedPromises`, `useExhaustiveSwitchCases`. `next-site` and `next-monorepo` add `useTailwindSortedClasses`.
 - `performance`: `noBarrelFile`, `noNamespaceImport`, `noReExportAll`, `useTopLevelRegex`.
 - `security`: `noDangerouslySetInnerHtml`.
 - `style`: `noDefaultExport`, `noExportedImports`, `noIncrementDecrement`, `noMagicNumbers`, `noNestedTernary`, `noNonNullAssertion`, `noParameterAssign`, `noRestrictedImports` (no `memo`, `useCallback` or `useMemo`, because React Compiler memoizes), `useAtIndex`, `useBlockStatements`, `useConsistentArrayType`, `useConsistentArrowReturn`, `useConsistentObjectDefinitions`, `useConsistentTypeDefinitions` (`type`), `useDestructuring`, `useErrorCause`, `useExportType`, `useFilenamingConvention` (kebab-case), `useImportType`, `useNamingConvention`, `useObjectSpread`, `useReactFunctionComponents`, `useUnifiedTypeSignatures`.
@@ -96,14 +96,14 @@ It turns on `strict`, `isolatedModules` and `moduleDetection: force`. It sets no
 Add it as a git dependency pinned to a tag, next to Biome:
 
 ```bash
-pnpm add -D @biomejs/biome@2.5.15 "@anstapol/code-rules@github:anstapol/code-rules#v0.3.0"
+pnpm add -D @biomejs/biome@2.6.8 "@anstapol/code-rules@github:anstapol/code-rules#v0.4.0"
 ```
 
 Then extend one entry point in the project's root `biome.json`:
 
 ```json
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.8/schema.json",
   "extends": ["@anstapol/code-rules/next-site"],
   "files": {
     "includes": ["**", "!**/*.gen.ts"]
@@ -115,7 +115,7 @@ The package does not set `files`, so each project lists what Biome should read. 
 
 ### Where `biome.json` must live
 
-The grit rules are referenced as `./node_modules/@anstapol/code-rules/rules/<rule>.grit`. Biome 2.5.15 resolves plugin paths in an extended config from the project's root config, not from the config that declares them. So the root `biome.json` must sit next to a `node_modules` folder that contains this package. In a pnpm workspace, add it to the root `package.json`.
+The grit rules are referenced as `./node_modules/@anstapol/code-rules/rules/<rule>.grit`. Biome 2.6.8 resolves plugin paths in an extended config from the project's root config, not from the config that declares them. So the root `biome.json` must sit next to a `node_modules` folder that contains this package. In a pnpm workspace, add it to the root `package.json`.
 
 ### Moving from v0.1.0
 
@@ -157,7 +157,7 @@ A shared grit rule cannot be switched off for a path in config. Suppress it in t
 
 ## How the entry points are built
 
-Biome 2.5.15 ignores `extends` inside a config that is itself extended, so `next-monorepo.json` cannot extend `typescript.json`. The sources live in `src/`, and `pnpm build` writes each entry point out flat at the repo root: `src/typescript.json` merged with the type file. `next-site` and `next-monorepo` merge `src/next.json` in between, which holds the Next.js and React rules they share. The merge follows Biome's own: `overrides` and `plugins` add up, a rule set in the type file replaces the shared rule, other objects merge.
+Biome 2.6.8 ignores `extends` inside a config that is itself extended, so `next-monorepo.json` cannot extend `typescript.json`. The sources live in `src/`, and `pnpm build` writes each entry point out flat at the repo root: `src/typescript.json` merged with the type file. `next-site` and `next-monorepo` merge `src/next.json` in between, which holds the Next.js and React rules they share. The merge follows Biome's own: `overrides` and `plugins` add up, a rule set in the type file replaces the shared rule, other objects merge.
 
 Never edit the root `typescript.json`, `next-site.json`, `next-monorepo.json` or `expo-app.json` by hand. `pnpm test` fails when they are stale.
 
