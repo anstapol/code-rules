@@ -219,6 +219,17 @@ function checkFireAndForget(consumer) {
   }
 }
 
+// Type parameters may take the T prefix (TData), which strictCase alone reports on Biome 2.6.
+function checkTypeParameters(consumer) {
+  const fixture = join(cases, 'type-parameters');
+  for (const name of ENTRY_FILES) {
+    useEntry(consumer, name);
+    const files = placeFixture(consumer, fixture);
+    const check = biome(consumer, ['check', '--error-on-warnings', ...files]);
+    report(check.status === 0, `${name} type-parameters passes biome check`, check.output);
+  }
+}
+
 // The features pattern: relative imports and the database client in server.ts
 // pass in every project type, and a route file may define its page component.
 function checkFeaturesPattern(consumer) {
@@ -269,6 +280,7 @@ const consumer = setUpConsumer();
 checkEntryPoints(consumer);
 checkReactComponent(consumer);
 checkFireAndForget(consumer);
+checkTypeParameters(consumer);
 checkFeaturesPattern(consumer);
 checkPureHelpers(consumer);
 checkMetadataImages(consumer);

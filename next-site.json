@@ -147,6 +147,15 @@
                 "selector": {
                   "kind": "objectLiteralMember"
                 }
+              },
+              {
+                "formats": [
+                  "PascalCase"
+                ],
+                "match": "T?(.+)",
+                "selector": {
+                  "kind": "typeParameter"
+                }
               }
             ],
             "strictCase": true

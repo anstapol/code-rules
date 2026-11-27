@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.4.1
+
+### Rules
+
+- `useNamingConvention` allows a `T` prefix on type parameters, as in `TData` and `TFieldValues`. Biome 2.6 reports these names under `strictCase` because `T` and the next letter are two consecutive capitals, while Biome 2.5.15 accepted them. The rest of the name must still be PascalCase, so `k` is still reported.
+
+This only relaxes a rule, so code that passed v0.4.0 still passes.
+
 ## v0.4.0
 
 Needs Biome 2.6.8 exactly. Biome 2.6 rejects the v0.3.0 config, so a project on Biome 2.6 must use this tag, and a project on Biome 2.5.15 must stay on v0.3.0.
