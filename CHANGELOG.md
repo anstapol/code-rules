@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.5.0
+
+### Rules
+
+- `noUnnecessaryConditions` is off. Biome 2.6.8 infers types narrower than TypeScript does and reports conditions that can go either way: a field that starts at the literal `0` and is incremented, `item?.cents ?? 0` where the item is nullable, and a property only some array elements set. The reference project has four of these and no real violation left. A later tag turns the rule back on by itself once Biome's inference handles these cases.
+- `useNamingConvention` no longer strips the `T` from a type parameter that is plain PascalCase. v0.4.1 read `Type` as the prefix `T` plus `ype` and reported it, along with `Target` and `Tag`. `TData` still passes and `k` is still reported.
+
+A `biome-ignore lint/suspicious/noUnnecessaryConditions` comment is now unused, and `--error-on-warnings` fails on it. Delete the comment.
+
 ## v0.4.1
 
 ### Rules

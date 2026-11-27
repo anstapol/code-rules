@@ -35,8 +35,10 @@ A project extends one Biome entry point. `next-site`, `next-monorepo` and `expo-
 - `nursery`: `noFloatingPromises`, `noMisusedPromises`, `useExhaustiveSwitchCases`. `next-site` and `next-monorepo` add `useTailwindSortedClasses`.
 - `performance`: `noBarrelFile`, `noNamespaceImport`, `noReExportAll`, `useTopLevelRegex`.
 - `security`: `noDangerouslySetInnerHtml`.
-- `style`: `noDefaultExport`, `noExportedImports`, `noIncrementDecrement`, `noMagicNumbers`, `noNestedTernary`, `noNonNullAssertion`, `noParameterAssign`, `noRestrictedImports` (no `memo`, `useCallback` or `useMemo`, because React Compiler memoizes), `useAtIndex`, `useBlockStatements`, `useConsistentArrayType`, `useConsistentArrowReturn`, `useConsistentObjectDefinitions`, `useConsistentTypeDefinitions` (`type`), `useDestructuring`, `useErrorCause`, `useExportType`, `useFilenamingConvention` (kebab-case), `useImportType`, `useNamingConvention` (type parameters may take a `T` prefix, as in `TData`), `useObjectSpread`, `useReactFunctionComponents`, `useUnifiedTypeSignatures`.
-- `suspicious`: `noBitwiseOperators`, `noConsole` (allows `console.error` and `console.warn`), `noDeprecatedImports`, `noDuplicatedSpreadProps`, `noDuplicateTestHooks`, `noEqualsToNull`, `noEvolvingTypes`, `noExplicitAny`, `noExportsInTest`, `noFocusedTests`, `noImportCycles`, `noLeakedRender`, `noMisplacedAssertion`, `noParametersOnlyUsedInRecursion`, `noReturnAssign`, `noShadow`, `noSkippedTests`, `noTsIgnore`, `noUnnecessaryConditions`, `useArraySortCompare`, `useAwait`, `useGuardForIn`.
+- `style`: `noDefaultExport`, `noExportedImports`, `noIncrementDecrement`, `noMagicNumbers`, `noNestedTernary`, `noNonNullAssertion`, `noParameterAssign`, `noRestrictedImports` (no `memo`, `useCallback` or `useMemo`, because React Compiler memoizes), `useAtIndex`, `useBlockStatements`, `useConsistentArrayType`, `useConsistentArrowReturn`, `useConsistentObjectDefinitions`, `useConsistentTypeDefinitions` (`type`), `useDestructuring`, `useErrorCause`, `useExportType`, `useFilenamingConvention` (kebab-case), `useImportType`, `useNamingConvention` (type parameters may take a `T` prefix, as in `TData`, and a name such as `Type` stays PascalCase), `useObjectSpread`, `useReactFunctionComponents`, `useUnifiedTypeSignatures`.
+- `suspicious`: `noBitwiseOperators`, `noConsole` (allows `console.error` and `console.warn`), `noDeprecatedImports`, `noDuplicatedSpreadProps`, `noDuplicateTestHooks`, `noEqualsToNull`, `noEvolvingTypes`, `noExplicitAny`, `noExportsInTest`, `noFocusedTests`, `noImportCycles`, `noLeakedRender`, `noMisplacedAssertion`, `noParametersOnlyUsedInRecursion`, `noReturnAssign`, `noShadow`, `noSkippedTests`, `noTsIgnore`, `useArraySortCompare`, `useAwait`, `useGuardForIn`.
+
+`noUnnecessaryConditions` is off. On Biome 2.6.8 it reports conditions that TypeScript types as reachable, such as a counter that starts at `0` or `item?.cents ?? 0` on a nullable item. A later tag turns it back on once Biome's type inference handles them.
 
 ### Relaxations
 
@@ -96,7 +98,7 @@ It turns on `strict`, `isolatedModules` and `moduleDetection: force`. It sets no
 Add it as a git dependency pinned to a tag, next to Biome:
 
 ```bash
-pnpm add -D @biomejs/biome@2.6.8 "@anstapol/code-rules@github:anstapol/code-rules#v0.4.0"
+pnpm add -D @biomejs/biome@2.6.8 "@anstapol/code-rules@github:anstapol/code-rules#v0.5.0"
 ```
 
 Then extend one entry point in the project's root `biome.json`:
