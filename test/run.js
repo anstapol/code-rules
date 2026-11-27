@@ -75,7 +75,7 @@ function setUpConsumer() {
   writeFileSync(
     join(dir, 'package.json'),
     JSON.stringify({
-      devDependencies: { [PACKAGE]: `file:${root}`, '@biomejs/biome': '2.5.15' },
+      devDependencies: { [PACKAGE]: `file:${root}`, '@biomejs/biome': '2.6.8' },
       name: 'consumer',
       private: true
     })
