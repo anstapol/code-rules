@@ -152,7 +152,7 @@
                 "formats": [
                   "PascalCase"
                 ],
-                "match": "T?(.+)",
+                "match": "T([A-Z].*)|(.+)",
                 "selector": {
                   "kind": "typeParameter"
                 }
@@ -192,7 +192,6 @@
         "noShadow": "error",
         "noSkippedTests": "error",
         "noTsIgnore": "error",
-        "noUnnecessaryConditions": "error",
         "useArraySortCompare": "error",
         "useAwait": "error",
         "useGuardForIn": "error"

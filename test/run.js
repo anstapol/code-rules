@@ -219,14 +219,14 @@ function checkFireAndForget(consumer) {
   }
 }
 
-// Type parameters may take the T prefix (TData), which strictCase alone reports on Biome 2.6.
-function checkTypeParameters(consumer) {
-  const fixture = join(cases, 'type-parameters');
+// A fixture that must pass biome check under every entry point.
+function checkPasses(consumer, fixtureName) {
+  const fixture = join(cases, fixtureName);
   for (const name of ENTRY_FILES) {
     useEntry(consumer, name);
     const files = placeFixture(consumer, fixture);
     const check = biome(consumer, ['check', '--error-on-warnings', ...files]);
-    report(check.status === 0, `${name} type-parameters passes biome check`, check.output);
+    report(check.status === 0, `${name} ${fixtureName} passes biome check`, check.output);
   }
 }
 
@@ -280,7 +280,12 @@ const consumer = setUpConsumer();
 checkEntryPoints(consumer);
 checkReactComponent(consumer);
 checkFireAndForget(consumer);
-checkTypeParameters(consumer);
+// Type parameters may take the T prefix (TData), which strictCase alone reports
+// on Biome 2.6, and a PascalCase name such as Type keeps its leading T.
+checkPasses(consumer, 'type-parameters');
+// Biome 2.6.8 reports conditions TypeScript types as reachable, so
+// noUnnecessaryConditions stays off until its inference catches up.
+checkPasses(consumer, 'inferred-conditions');
 checkFeaturesPattern(consumer);
 checkPureHelpers(consumer);
 checkMetadataImages(consumer);
